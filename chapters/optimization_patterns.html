@@ -1,0 +1,1198 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Optimization patterns</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/optimization_patterns';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Advanced linear regression" href="advanced_linear_regression.html" />
+    <link rel="prev" title="Hello, World! (Linear regression)" href="linear_regression.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    JAX Recipes for Statistics
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="linear_regression.html">Hello, World! (Linear regression)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Optimization patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_linear_regression.html">Advanced linear regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="newton_method.html">Newton’s method by Automatic Differentiation</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fchapters/optimization_patterns.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/chapters/optimization_patterns.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Optimization patterns</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-example-logistic-regression">Running example: logistic regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vanilla-gradient-descent">“Vanilla” gradient descent</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptative-gradient-descent">Adaptative gradient descent</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bfgs-algorithm">BFGS Algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#write-your-own-newton-method">Write your own Newton Method</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#code-explanation">Code explanation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-the-hessian">Inspecting the Hessian</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="optimization-patterns">
+<h1>Optimization patterns<a class="headerlink" href="#optimization-patterns" title="Link to this heading">#</a></h1>
+<p>Not every model is a linear regression with a closed form optimizer.
+In this recipe, we will compare a few different patterns that JAX can power to optimize any differentiable function.
+We’ll cover the following topics:</p>
+<ol class="arabic simple">
+<li><p>Gradient Descent</p></li>
+<li><p>BFGS</p></li>
+<li><p>Newton method</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">import</span> <span class="nn">jax.random</span> <span class="k">as</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">jax.scipy.optimize</span> <span class="k">as</span> <span class="nn">jso</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">optax</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;ggplot&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="running-example-logistic-regression">
+<h2>Running example: logistic regression<a class="headerlink" href="#running-example-logistic-regression" title="Link to this heading">#</a></h2>
+<p>Let’s use a logistic regression as an example of a well-behaved (i.e. convex) optimization problem that does not admit a closed-form optimizer.
+We will discuss less well-behaved problems at the end.</p>
+<p>Given fixed <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> (which we will synthesized respectively from a correlated and standard normal distributions), we define <span class="math notranslate nohighlight">\(p(X)  = \frac{1}{1 + exp(-X\beta)}\)</span>.</p>
+<p>From this let <span class="math notranslate nohighlight">\(y \sim \text{Bernoulli}(p(X))\)</span>.</p>
+<p>Let’s use JAX to sample this synthetic dataset:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">key</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">20220521</span><span class="p">)</span>
+<span class="n">key</span><span class="p">,</span> <span class="o">*</span><span class="n">skeys</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">10_000</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="n">beta</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">skeys</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="p">))</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span>
+    <span class="n">skeys</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">mean</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+    <span class="n">cov</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">]),</span> <span class="c1"># First 3 predictors are positively correlated</span>
+    <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,),</span>
+<span class="p">)</span>
+
+<span class="n">p_x</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span> <span class="o">@</span> <span class="n">beta</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">skeys</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p_x</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span>
+    <span class="s1">&#39;p_x&#39;</span><span class="p">:</span> <span class="n">p_x</span><span class="p">,</span>
+    <span class="o">**</span><span class="p">{</span><span class="sa">f</span><span class="s1">&#39;x_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)}</span>
+<span class="p">})</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/4b29caf8dc63b1533c956cd0ee1f918c87b200686ef346ff8f39a1de9b2eeff5.png" src="../_images/4b29caf8dc63b1533c956cd0ee1f918c87b200686ef346ff8f39a1de9b2eeff5.png" />
+</div>
+</div>
+<p>Before performing any sort of optimization, always make sure that predictors and responses are normalized to a scale that is around 1. Otherwise, any optimization algorithm can run into numerical instabilities.</p>
+<p>Here, we are good since predictors and parameters have been generated with a variance of 1.</p>
+<p>Let’s use negative likelihood as loss function to fit the model:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">p_hat</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span> <span class="o">@</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="n">loglik</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">bernoulli</span><span class="o">.</span><span class="n">logpmf</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">p_hat</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">loglik</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loss at true beta: </span><span class="si">{</span><span class="n">loss</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loss at true beta: loss(beta, x, y)=Array(0.35847148, dtype=float32)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="gradient-descent">
+<h2>Gradient Descent<a class="headerlink" href="#gradient-descent" title="Link to this heading">#</a></h2>
+<p>Though maybe not as loved by statisticians, let’s start with every machine learner’s favorite algorithm, gradient descent.
+It is nonetheless a very robust algorithm that can handle a wide variety of situation and that becomes unavoidable when the number of parameter gets large.</p>
+<section id="vanilla-gradient-descent">
+<h3>“Vanilla” gradient descent<a class="headerlink" href="#vanilla-gradient-descent" title="Link to this heading">#</a></h3>
+<p>For reference, let’s write our own gradient descent first:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="k">def</span> <span class="nf">fit_beta_gd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">n_iterations</span> <span class="o">=</span> <span class="mi">10_000</span>
+    <span class="n">lr</span> <span class="o">=</span> <span class="mf">3.0</span>
+    <span class="n">g_tol</span> <span class="o">=</span> <span class="mf">1e-6</span>
+
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;g_norm&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+    
+    <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">beta</span><span class="p">):</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">value_and_grad</span><span class="p">(</span><span class="n">loss</span><span class="p">)(</span><span class="n">beta</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">-</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">g</span>
+        <span class="k">return</span> <span class="n">beta</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">):</span>
+        <span class="n">beta</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g_norm</span> <span class="o">=</span> <span class="n">update</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+        <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g_norm</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">g_norm</span> <span class="o">&lt;</span> <span class="n">g_tol</span><span class="p">:</span>
+            <span class="k">break</span>
+    
+    <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+    <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="n">beta</span><span class="p">,</span> <span class="n">hist</span>
+
+<span class="n">beta_gd</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_beta_gd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 245 ms, sys: 12 ms, total: 257 ms
+Wall time: 252 ms
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta_gd</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gradient Descent&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/d0d6dfbb3cb3277edfb3a3562f275646d1b662db148f744b57df2a51c751934c.png" src="../_images/d0d6dfbb3cb3277edfb3a3562f275646d1b662db148f744b57df2a51c751934c.png" />
+<img alt="../_images/801d2ea3ab69d27f190935284de7c5160741becedef0b6aead7cd1b5fbe41f81.png" src="../_images/801d2ea3ab69d27f190935284de7c5160741becedef0b6aead7cd1b5fbe41f81.png" />
+</div>
+</div>
+<p>We chose the maximum learning rate allowing stable convergence. Here it is quite higher than typical learning rates because the model is simple. More complex models can benefit from the stability provided by a lower learning rate. Note that we start with <span class="math notranslate nohighlight">\(\beta=0\)</span> since the model is identifiable and not degenerate. For non-identifiable models (typically neural networks, or colinear predictors) it is important to initialize <span class="math notranslate nohighlight">\(\beta\)</span> randomly to break symmetries.</p>
+<p>Once fitted, we can see that the estimated beta is close to the real one. We will see how to test for statistical significance later in this recipe.</p>
+</section>
+<section id="adaptative-gradient-descent">
+<h3>Adaptative gradient descent<a class="headerlink" href="#adaptative-gradient-descent" title="Link to this heading">#</a></h3>
+<p>JAX can also be used to build adaptative gradient procedures such as Adam, that will make the choice of the learning rate less important.
+For this we will leverage the <code class="docutils literal notranslate"><span class="pre">optax</span></code> library which is build on top of JAX.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+
+<span class="k">def</span> <span class="nf">fit_beta_agd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">n_iterations</span> <span class="o">=</span> <span class="mi">10_000</span>
+    <span class="n">lr</span> <span class="o">=</span> <span class="mf">0.3</span>
+    <span class="n">g_tol</span> <span class="o">=</span> <span class="mf">1e-6</span>
+
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;g_norm&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+    
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optax</span><span class="o">.</span><span class="n">adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
+    <span class="n">opt_state</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+
+    <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">):</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">value_and_grad</span><span class="p">(</span><span class="n">loss</span><span class="p">)(</span><span class="n">beta</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">updates</span><span class="p">,</span> <span class="n">opt_state</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">optax</span><span class="o">.</span><span class="n">apply_updates</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">updates</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">beta</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">):</span>
+        <span class="n">beta</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g_norm</span> <span class="o">=</span> <span class="n">step</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">)</span>
+        <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g_norm</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">g_norm</span> <span class="o">&lt;</span> <span class="n">g_tol</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">beta</span><span class="p">,</span> <span class="n">hist</span>
+
+<span class="n">beta_agd</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_beta_agd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 184 ms, sys: 173 μs, total: 184 ms
+Wall time: 178 ms
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta_gd</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gradient Descent&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta_agd</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Adaptative Gradient Descent&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/1607a910f0b86263a2877f941a30cac3d9d41db412ea11809a838ec0e04d44dc.png" src="../_images/1607a910f0b86263a2877f941a30cac3d9d41db412ea11809a838ec0e04d44dc.png" />
+<img alt="../_images/0f816626f0a0c1e583dde40f539962387ed32d8572892cb224203e8e9948a281.png" src="../_images/0f816626f0a0c1e583dde40f539962387ed32d8572892cb224203e8e9948a281.png" />
+</div>
+</div>
+<p>The convergence plot is not motonically decreasing, which is typical of algorithms that have any sort of momentum term in the gradient updates.</p>
+<p>We can see that both vanilla and adaptative gradient descent algorithms converge to the same value in about the same amount of iterations and wall time. Adam is usually very useful for large neural network and requires less tuning than standard gradient descent. It is therefore a good tool to keep handy.</p>
+</section>
+</section>
+<section id="bfgs-algorithm">
+<h2>BFGS Algorithm<a class="headerlink" href="#bfgs-algorithm" title="Link to this heading">#</a></h2>
+<p>JAX provides its own version of BFGS provided by <code class="docutils literal notranslate"><span class="pre">jax.scipy.optimize.minimize</span></code> similarly to scipy.</p>
+<p>However, on the contrary to scipy, thanks to JAX automatic differentiation, jacobian evaluation is evaluated directly instead of the finite method employed by scipy. This is significantly more scalable when <span class="math notranslate nohighlight">\(p\)</span> gets larger (as computing a gradient by finite difference requires <span class="math notranslate nohighlight">\(O(p)\)</span> function evaluations). It is also significantly more numerically accurate, since any inaccuracy in the finite difference would result in inaccuracies in the optimization scheme. To achieve the same level of accuracy with scipy, the analyst would have to write their own gradient function and provide it to the <code class="docutils literal notranslate"><span class="pre">minimize</span></code> function. This is not doable if the function being optimized gets too complicated.</p>
+<p>Also, note that JAX <code class="docutils literal notranslate"><span class="pre">minimize</span></code> can be JIT-compiled and vectorized, making it is easy to solve batches of optimization problems. This is not easily done with scipy or other deep learning frameworks such as Tensorflow.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+
+<span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span> <span class="nf">fit_beta_BFGS</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">bfgs_results</span> <span class="o">=</span> <span class="n">jso</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BFGS&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">bfgs_results</span>
+
+<span class="n">bfgs_results</span> <span class="o">=</span> <span class="n">fit_beta_BFGS</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">beta_bfgs</span> <span class="o">=</span> <span class="n">bfgs_results</span><span class="o">.</span><span class="n">x</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.1 s, sys: 112 ms, total: 1.22 s
+Wall time: 1.19 s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">bfgs_results</span> <span class="o">=</span> <span class="n">fit_beta_BFGS</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">beta_bfgs</span> <span class="o">=</span> <span class="n">bfgs_results</span><span class="o">.</span><span class="n">x</span>
+<span class="n">bfgs_results</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 3.43 ms, sys: 0 ns, total: 3.43 ms
+Wall time: 2.98 ms
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>OptimizeResults(x=Array([-0.7529609 ,  0.75306016,  2.5934875 ,  1.6210222 ], dtype=float32), success=Array(True, dtype=bool), status=Array(0, dtype=int32, weak_type=True), fun=Array(0.3583041, dtype=float32), jac=Array([ 1.8311235e-07,  4.2795050e-06, -2.7267522e-06, -1.6934867e-07],      dtype=float32), hess_inv=Array([[ 30.916458 , -19.311388 , -15.532886 ,  -4.7146564],
+       [-19.311386 ,  23.778418 ,   2.4742012,   3.057907 ],
+       [-15.532884 ,   2.474204 ,  35.332436 ,  12.933321 ],
+       [ -4.7146564,   3.0579076,  12.93332  ,  15.548041 ]],      dtype=float32), nfev=Array(23, dtype=int32, weak_type=True), njev=Array(23, dtype=int32, weak_type=True), nit=Array(22, dtype=int32, weak_type=True))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta_gd</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gradient Descent&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta_agd</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Adaptative Gradient Descent&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta_bfgs</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;BFGS&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/f91e4a4e36ceee2c76fb4097d67cebd333d4f26c090a8f9c00c95abf671dbb4d.png" src="../_images/f91e4a4e36ceee2c76fb4097d67cebd333d4f26c090a8f9c00c95abf671dbb4d.png" />
+</div>
+</div>
+<p>After jit compilation (which lasts about 800ms), solving the problem takes about 2ms, making it very suitable to repeat experiments, bootstrap, etc.
+BFGS agrees with gradient descent methods on the optimizer.</p>
+</section>
+<section id="write-your-own-newton-method">
+<h2>Write your own Newton Method<a class="headerlink" href="#write-your-own-newton-method" title="Link to this heading">#</a></h2>
+<p>When I saw the performance and accuracy boost that automatic differentiation can provide to an algorithm like BFGS, it made me wonder if using the same philosophy on second order methods (like Newton method) would work.
+Note that a basic Newton method such as the one presented here only works on strongly convex problems, and use of it on problems that are not strictly convex (looking at you lasso regression) may lead to saddle points or straight up divergence.
+Luckily, logistic regression is indeed strictly convex if the predictors are not colinear.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">lax</span>
+
+<span class="c1"># Inspired by JAX implementation of BFGS: https://github.com/google/jax/blob/main/jax/_src/scipy/optimize/bfgs.py</span>
+
+<span class="k">class</span> <span class="nc">_NewtonResults</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Results from optimization.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    converged: True if minimization converged.</span>
+<span class="sd">    k: integer the number of iterations.</span>
+<span class="sd">    nfev: integer total number of objective evaluations performed.</span>
+<span class="sd">    ngev: integer total number of jacobian evaluations</span>
+<span class="sd">    nhev: integer total number of hessian evaluations</span>
+<span class="sd">    x_k: array containing the last argument value found during the search. If</span>
+<span class="sd">    the search converged, then this value is the argmin of the objective</span>
+<span class="sd">    function.</span>
+<span class="sd">    f_k: array containing the value of the objective function at `x_k`. If the</span>
+<span class="sd">    search converged, then this is the (local) minimum of the objective</span>
+<span class="sd">    function.</span>
+<span class="sd">    g_k: array containing the gradient of the objective function at `x_k`. If</span>
+<span class="sd">    the search converged the l2-norm of this tensor should be below the</span>
+<span class="sd">    tolerance.</span>
+<span class="sd">    H_k: array containing the inverse of the Hessian.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">converged</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="n">k</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="n">nfev</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="n">ngev</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="n">nhev</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="n">x_k</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">f_k</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">g_k</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">H_k</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span>
+
+
+<span class="k">def</span> <span class="nf">minimize_newton</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span>
+                    <span class="n">x0</span><span class="p">,</span>
+                    <span class="n">maxiter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">norm</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+                    <span class="n">gtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">maxiter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">maxiter</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span> <span class="o">*</span> <span class="mi">200</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="n">fun</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">d2f</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    
+    <span class="n">f_0</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+    <span class="n">g_0</span> <span class="o">=</span> <span class="n">df</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+    <span class="n">H_0</span> <span class="o">=</span> <span class="n">d2f</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">has_converged</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">gtol</span><span class="p">):</span>
+        <span class="k">return</span>  <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">gtol</span>
+    
+    <span class="n">state</span> <span class="o">=</span> <span class="n">_NewtonResults</span><span class="p">(</span>
+        <span class="n">converged</span><span class="o">=</span><span class="n">has_converged</span><span class="p">(</span><span class="n">g_0</span><span class="p">,</span> <span class="n">gtol</span><span class="p">),</span>
+        <span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">nfev</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">ngev</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">nhev</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">x_k</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+        <span class="n">f_k</span><span class="o">=</span><span class="n">f_0</span><span class="p">,</span>
+        <span class="n">g_k</span><span class="o">=</span><span class="n">g_0</span><span class="p">,</span>
+        <span class="n">H_k</span><span class="o">=</span><span class="n">H_0</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">cond_fun</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">converged</span><span class="p">)</span>
+                <span class="o">&amp;</span> <span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">k</span> <span class="o">&lt;</span> <span class="n">maxiter</span><span class="p">))</span>
+    
+    <span class="k">def</span> <span class="nf">body_fun</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">p_k</span> <span class="o">=</span> <span class="o">-</span><span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">H_k</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">g_k</span><span class="p">)</span>
+        <span class="n">x_kp1</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">x_k</span> <span class="o">+</span> <span class="n">p_k</span>
+        
+        <span class="n">f_kp1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x_kp1</span><span class="p">)</span>
+        <span class="n">g_kp1</span> <span class="o">=</span> <span class="n">df</span><span class="p">(</span><span class="n">x_kp1</span><span class="p">)</span>
+        <span class="n">H_kp1</span> <span class="o">=</span> <span class="n">d2f</span><span class="p">(</span><span class="n">x_kp1</span><span class="p">)</span>
+        
+        <span class="n">converged</span> <span class="o">=</span> <span class="n">has_converged</span><span class="p">(</span><span class="n">g_kp1</span><span class="p">,</span> <span class="n">gtol</span><span class="p">)</span>
+
+        <span class="n">state</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span>
+            <span class="n">converged</span><span class="o">=</span><span class="n">converged</span><span class="p">,</span>
+            <span class="n">k</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">nfev</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">nfev</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">ngev</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">ngev</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">nhev</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">nhev</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">x_k</span><span class="o">=</span><span class="n">x_kp1</span><span class="p">,</span>
+            <span class="n">f_k</span><span class="o">=</span><span class="n">f_kp1</span><span class="p">,</span>
+            <span class="n">g_k</span><span class="o">=</span><span class="n">g_kp1</span><span class="p">,</span>
+            <span class="n">H_k</span><span class="o">=</span><span class="n">H_kp1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">state</span>
+
+    <span class="n">state</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">while_loop</span><span class="p">(</span><span class="n">cond_fun</span><span class="p">,</span> <span class="n">body_fun</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">state</span>
+
+
+<span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span> <span class="nf">fit_beta_newton</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">beta</span><span class="p">:</span> <span class="n">loss</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">minimize_newton</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+
+<span class="n">newton_results</span> <span class="o">=</span> <span class="n">fit_beta_newton</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">newton_results</span> <span class="o">=</span> <span class="n">fit_beta_newton</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">beta_newton</span> <span class="o">=</span> <span class="n">newton_results</span><span class="o">.</span><span class="n">x_k</span>
+<span class="n">newton_results</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 2.74 ms, sys: 129 μs, total: 2.87 ms
+Wall time: 1.8 ms
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>_NewtonResults(converged=Array(True, dtype=bool), k=Array(5, dtype=int32, weak_type=True), nfev=Array(6, dtype=int32, weak_type=True), ngev=Array(6, dtype=int32, weak_type=True), nhev=Array(6, dtype=int32, weak_type=True), x_k=Array([-0.75291693,  0.7529523 ,  2.593537  ,  1.6210217 ], dtype=float32), f_k=Array(0.3583041, dtype=float32), g_k=Array([-7.3049966e-07, -7.5456234e-07, -1.1025003e-06, -6.8262864e-07],      dtype=float32), H_k=Array([[ 0.08651333,  0.06214452,  0.03981939, -0.02316055],
+       [ 0.06214452,  0.08411708,  0.02620902, -0.02238941],
+       [ 0.03981939,  0.02620902,  0.0539918 , -0.03779037],
+       [-0.02316055, -0.02238941, -0.03779037,  0.0879974 ]],      dtype=float32))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta_gd</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gradient Descent&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta_agd</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Adaptative Gradient Descent&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta_bfgs</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;BFGS&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta_newton</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Newton&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/cf87f7a9ad5d1d9950a4469dc1f8f5c3bed3d26278d685c41bcf2a1e72b7db27.png" src="../_images/cf87f7a9ad5d1d9950a4469dc1f8f5c3bed3d26278d685c41bcf2a1e72b7db27.png" />
+</div>
+</div>
+<p>Once again all methods agree on the optimizer, which is an advantage of convex problems.</p>
+<section id="code-explanation">
+<h3>Code explanation<a class="headerlink" href="#code-explanation" title="Link to this heading">#</a></h3>
+<p>If this Newton method looked a little more cryptic, this is normal as it uses more advanced JAX primitives and concepts.
+The results are defined as a named tuple, because the control flow that we will use necessitates the use of a single state variable that holds all relevant information.</p>
+<p>Secondly,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">df</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">d2f</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>uses JAX automatic differentiation to efficiently and exactly compute gradients and hessians.</p>
+<p>The control flow uses the <code class="docutils literal notranslate"><span class="pre">lax</span></code> primitive:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">while_loop</span><span class="p">(</span><span class="n">cond_fun</span><span class="p">,</span> <span class="n">body_fun</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which is functionally equivalent to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="n">cond_fun</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">body_fun</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This allows JAX to compile the function if needed and even take gradients (in forward-mode of automatic differentiation).
+This type of capability can be very important for scientific machine learning, which benefits from taking gradients of complex business logic, such as differential equation solvers.</p>
+<p>See <a class="reference external" href="https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html#control-flow">https://jax.readthedocs.io/en/latest/notebooks/Common_Gotchas_in_JAX.html#control-flow</a> for more on control flow.</p>
+<p>You can find the actual Newton algorithm in <code class="docutils literal notranslate"><span class="pre">body_fun</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>        <span class="n">p_k</span> <span class="o">=</span> <span class="o">-</span><span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">H_k</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">g_k</span><span class="p">)</span>
+        <span class="n">x_kp1</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">x_k</span> <span class="o">+</span> <span class="n">p_k</span>
+</pre></div>
+</div>
+<p>The rest is simple bookkeeping of variables of interest.</p>
+</section>
+</section>
+<section id="inspecting-the-hessian">
+<h2>Inspecting the Hessian<a class="headerlink" href="#inspecting-the-hessian" title="Link to this heading">#</a></h2>
+<p>Since we have seen that all methods give us the same optimizer, we will just pick one and denote it <span class="math notranslate nohighlight">\(\hat\beta\)</span>.
+Thanks to JAX automatic differentiation, we can easily access the hessian at the optimizer and inspect it.</p>
+<p>Note that examination of the Hessian here is entirely independent of the chosen optimization algorithm.
+To emphasize this point, we will inspect the hessian at the optimizer found by gradient descent, which obviously did not leverage the hessian during optimization.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">beta_hat</span> <span class="o">=</span> <span class="n">beta_gd</span>
+<span class="n">H_hat</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">loss</span><span class="p">)(</span><span class="n">beta_hat</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">iH_hat</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">H_hat</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>From there, we can test a few things:</p>
+<ul class="simple">
+<li><p>are we at a local minimum? All eigenvalues of the hessian should be positive (assuming gradient is zero).</p></li>
+<li><p>is the inverse hessian estimated by BFGS accurate?</p></li>
+<li><p>what are the standard error since we maximized likelihood?</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Is at local minimum: &quot;</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvalsh</span><span class="p">(</span><span class="n">H_hat</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Is at local minimum:  True
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">iH_hat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">bfgs_results</span><span class="o">.</span><span class="n">hess_inv</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">((</span><span class="n">iH_hat</span> <span class="o">-</span> <span class="n">bfgs_results</span><span class="o">.</span><span class="n">hess_inv</span><span class="p">)</span> <span class="o">/</span> <span class="n">iH_hat</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[ 32.637516  -19.787825  -17.123255   -3.7981398]
+ [-19.787827   26.056261    4.203784    3.2267888]
+ [-17.123253    4.2037807  38.17988    12.95915  ]
+ [ -3.7981398   3.2267876  12.959151   16.750694 ]]
+[[ 30.916458  -19.311388  -15.532886   -4.7146564]
+ [-19.311386   23.778418    2.4742012   3.057907 ]
+ [-15.532884    2.474204   35.332436   12.933321 ]
+ [ -4.7146564   3.0579076  12.93332    15.548041 ]]
+[[ 0.0527325   0.02407726  0.09287774 -0.24130669]
+ [ 0.02407745  0.0874202   0.41143474  0.05233737]
+ [ 0.09287775  0.4114336   0.07457967  0.00199313]
+ [-0.24130669  0.05233688  0.00199328  0.0717972 ]]
+</pre></div>
+</div>
+</div>
+</div>
+<p>BFGS inverse Hessian is loosely aligned with the exact one.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_cov</span><span class="p">(</span><span class="n">iH</span><span class="p">):</span>
+    <span class="c1"># Division by n is due to the loss defined as -log_likelihood / n</span>
+    <span class="n">cov</span> <span class="o">=</span> <span class="n">iH</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="n">beta_std</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cov</span><span class="p">))</span>
+    <span class="n">corr</span> <span class="o">=</span> <span class="p">(</span><span class="n">cov</span> <span class="o">/</span> <span class="n">beta_std</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">beta_std</span>
+    <span class="k">return</span> <span class="n">cov</span><span class="p">,</span> <span class="n">beta_std</span><span class="p">,</span> <span class="n">corr</span> 
+
+<span class="n">cov</span><span class="p">,</span> <span class="n">beta_std</span><span class="p">,</span> <span class="n">corr</span> <span class="o">=</span> <span class="n">get_cov</span><span class="p">(</span><span class="n">iH_hat</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">corr</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/d3b462f4859405826cef2cf396c37721c3cdb9a65e19319334d0b7638aa8e56a.png" src="../_images/d3b462f4859405826cef2cf396c37721c3cdb9a65e19319334d0b7638aa8e56a.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span><span class="p">,</span> <span class="n">beta_std_bfgs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_cov</span><span class="p">(</span><span class="n">bfgs_results</span><span class="o">.</span><span class="n">hess_inv</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">beta</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">beta_gd</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gradient Descent&#39;</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">beta_std</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/728ebf45dfcb3b6e9d78684f15f82dcdcc2e01d52cce85dd1a5aa22f3beec36f.png" src="../_images/728ebf45dfcb3b6e9d78684f15f82dcdcc2e01d52cce85dd1a5aa22f3beec36f.png" />
+</div>
+</div>
+<p>The true estimate is indeed within standard error as inferred by the hessian.</p>
+<p>We can validate those standard errors by bootstrap, similarly to the linear regression recipe:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="k">def</span> <span class="nf">replicate</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="n">p_x</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span> <span class="o">@</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">p_x</span><span class="p">)</span>
+    <span class="n">beta_hat</span> <span class="o">=</span> <span class="n">fit_beta_BFGS</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">beta_hat</span><span class="o">.</span><span class="n">x</span>
+
+<span class="n">n_replications</span> <span class="o">=</span> <span class="mi">1_000</span>
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">skeys</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">skey</span><span class="p">,</span> <span class="n">n_replications</span><span class="p">)</span>
+
+<span class="n">boostrap</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">replicate</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)))</span>
+<span class="n">beta_s</span> <span class="o">=</span> <span class="n">boostrap</span><span class="p">(</span><span class="n">skeys</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">beta_std_bootstrap</span> <span class="o">=</span> <span class="n">beta_s</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 15.7 s, sys: 381 ms, total: 16.1 s
+Wall time: 6.12 s
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">jit</span></code> and <code class="docutils literal notranslate"><span class="pre">vmap</span></code> allows us to quickly compute a large batch of BFGS optimization.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Std errors from 3 different methods:</span>
+<span class="n">beta_std</span><span class="p">,</span> <span class="n">beta_std_bootstrap</span><span class="p">,</span> <span class="n">beta_std_bfgs</span> 
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(Array([0.05712925, 0.05104534, 0.06178987, 0.04092761], dtype=float32),
+ Array([0.05695678, 0.04997138, 0.06450254, 0.03929887], dtype=float32),
+ Array([0.05560257, 0.04876312, 0.05944109, 0.03943101], dtype=float32))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">beta</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Truth&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">beta_gd</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gradient Descent with Hessian-based std&#39;</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">beta_std</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="mf">.02</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">beta_gd</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Gradient Descent with Bootstrap-based std&#39;</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">beta_std_bootstrap</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/9ca160ed5bab06929bb1ff0ff1c7b5a7a44c8b8f2b989e4b607583f6586cba87.png" src="../_images/9ca160ed5bab06929bb1ff0ff1c7b5a7a44c8b8f2b989e4b607583f6586cba87.png" />
+</div>
+</div>
+<p>For all intents and purposes, Hessian-based inference is strictly equivalent to the bootstrap here. This should be the case as long as sample size is large and standard errors small. Otherwise bootstrap should be more accurate. BFGS is also close, but your mileage may vary.</p>
+</section>
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<p>In this recipe, we have seen different patterns for optimization using JAX automatic differentiation:</p>
+<ol class="arabic simple">
+<li><p>Gradient descent, regular and adaptative</p></li>
+<li><p>BFGS, provided directly by JAX</p></li>
+<li><p>Newton method, wrote using JAX primitives</p></li>
+</ol>
+<p>We have also leveraged JAX hessian computations to inspect the stability of the optimizer, confirming it was indeed a minimum, and computing standard errors for inference.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="linear_regression.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Hello, World! (Linear regression)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="advanced_linear_regression.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Advanced linear regression</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-example-logistic-regression">Running example: logistic regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-descent">Gradient Descent</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vanilla-gradient-descent">“Vanilla” gradient descent</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptative-gradient-descent">Adaptative gradient descent</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bfgs-algorithm">BFGS Algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#write-your-own-newton-method">Write your own Newton Method</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#code-explanation">Code explanation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-the-hessian">Inspecting the Hessian</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Arthur Vivé
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
