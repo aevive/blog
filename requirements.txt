@@ -1,0 +1,8 @@
+jupyter-book
+ghp-import
+matplotlib
+numpy
+jax[cpu]
+pandas
+seaborn
+optax
