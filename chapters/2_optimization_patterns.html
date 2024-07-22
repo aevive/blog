@@ -63,7 +63,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="JAX Recipe I: Hello, World! (Linear regression)" href="1_linear_regression.html" />
-    <link rel="prev" title="The AV blog" href="../intro.html" />
+    <link rel="prev" title="JAX Recipe III: Multi-class predictions with correlation (Multivariate Probit)" href="7h_multivariate_probit_regression.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -182,8 +182,10 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="7h_multivariate_probit_regression.html">JAX Recipe III: Multi-class predictions with correlation (Multivariate Probit)</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">JAX Recipe II: Optimization patterns</a></li>
 <li class="toctree-l1"><a class="reference internal" href="1_linear_regression.html">JAX Recipe I: Hello, World! (Linear regression)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="0_references.html">References</a></li>
 </ul>
 
     </div>
@@ -230,6 +232,37 @@
 
 
 
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/aevive/blog/blob/main/chapters/2_optimization_patterns.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
 <div class="dropdown dropdown-source-buttons">
   <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
     <i class="fab fa-github"></i>
@@ -238,7 +271,7 @@
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+      <li><a href="https://github.com/aevive/blog" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -255,7 +288,7 @@
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fchapters/2_optimization_patterns.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/aevive/blog/issues/new?title=Issue%20on%20page%20%2Fchapters/2_optimization_patterns.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -549,8 +582,8 @@ It is nonetheless a very robust algorithm that can handle a wide variety of situ
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 277 ms, sys: 89 μs, total: 277 ms
-Wall time: 272 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 249 ms, sys: 4.03 ms, total: 253 ms
+Wall time: 247 ms
 </pre></div>
 </div>
 </div>
@@ -623,8 +656,8 @@ For this we will leverage the <code class="docutils literal notranslate"><span c
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 216 ms, sys: 0 ns, total: 216 ms
-Wall time: 209 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 171 ms, sys: 8.1 ms, total: 179 ms
+Wall time: 174 ms
 </pre></div>
 </div>
 </div>
@@ -679,8 +712,8 @@ Wall time: 209 ms
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.21 s, sys: 90.2 ms, total: 1.3 s
-Wall time: 1.28 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 1.03 s, sys: 83.6 ms, total: 1.11 s
+Wall time: 1.09 s
 </pre></div>
 </div>
 </div>
@@ -695,8 +728,8 @@ Wall time: 1.28 s
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 3.74 ms, sys: 0 ns, total: 3.74 ms
-Wall time: 2.96 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 3.52 ms, sys: 0 ns, total: 3.52 ms
+Wall time: 3.12 ms
 </pre></div>
 </div>
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>OptimizeResults(x=Array([-0.7529609 ,  0.75306016,  2.5934875 ,  1.6210222 ], dtype=float32), success=Array(True, dtype=bool), status=Array(0, dtype=int32, weak_type=True), fun=Array(0.3583041, dtype=float32), jac=Array([ 1.8311235e-07,  4.2795050e-06, -2.7267522e-06, -1.6934867e-07],      dtype=float32), hess_inv=Array([[ 30.916458 , -19.311388 , -15.532886 ,  -4.7146564],
@@ -854,8 +887,8 @@ Luckily, logistic regression is indeed strictly convex if the predictors are not
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 3.15 ms, sys: 0 ns, total: 3.15 ms
-Wall time: 1.93 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 2.68 ms, sys: 101 μs, total: 2.78 ms
+Wall time: 1.83 ms
 </pre></div>
 </div>
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>_NewtonResults(converged=Array(True, dtype=bool), k=Array(5, dtype=int32, weak_type=True), nfev=Array(6, dtype=int32, weak_type=True), ngev=Array(6, dtype=int32, weak_type=True), nhev=Array(6, dtype=int32, weak_type=True), x_k=Array([-0.75291693,  0.7529523 ,  2.593537  ,  1.6210217 ], dtype=float32), f_k=Array(0.3583041, dtype=float32), g_k=Array([-7.3049966e-07, -7.5456234e-07, -1.1025003e-06, -6.8262864e-07],      dtype=float32), H_k=Array([[ 0.08651333,  0.06214452,  0.03981939, -0.02316055],
@@ -1048,8 +1081,8 @@ This should be expected from approximate second order methods such as BFGS.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 16 s, sys: 459 ms, total: 16.5 s
-Wall time: 6.54 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 15.5 s, sys: 481 ms, total: 16 s
+Wall time: 5.98 s
 </pre></div>
 </div>
 </div>
@@ -1136,12 +1169,12 @@ Wall time: 6.54 s
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../intro.html"
+       href="7h_multivariate_probit_regression.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">The AV blog</p>
+        <p class="prev-next-title">JAX Recipe III: Multi-class predictions with correlation (Multivariate Probit)</p>
       </div>
     </a>
     <a class="right-next"

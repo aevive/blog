@@ -1,0 +1,1742 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>JAX Recipe III: Multi-class predictions with correlation (Multivariate Probit)</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/7h_multivariate_probit_regression';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="JAX Recipe II: Optimization patterns" href="2_optimization_patterns.html" />
+    <link rel="prev" title="The AV blog" href="../intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    The AV blog
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">JAX Recipe III: Multi-class predictions with correlation (Multivariate Probit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_optimization_patterns.html">JAX Recipe II: Optimization patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1_linear_regression.html">JAX Recipe I: Hello, World! (Linear regression)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="0_references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/aevive/blog/blob/main/chapters/7h_multivariate_probit_regression.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/aevive/blog" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/aevive/blog/issues/new?title=Issue%20on%20page%20%2Fchapters/7h_multivariate_probit_regression.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/chapters/7h_multivariate_probit_regression.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>JAX Recipe III: Multi-class predictions with correlation (Multivariate Probit)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-specification">Model specification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#notations">Notations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretation">Interpretation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-data">Generating data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-marginals">Fitting marginals</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-the-correlation-structure">Fitting the correlation structure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-estimation">Parameter estimation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#point-estimates">Point estimates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-intervals">Confidence intervals</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-interval-for-sigma-work-in-progress">Confidence interval for <span class="math notranslate nohighlight">\(\Sigma\)</span> (Work in progress)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-e-m-algorithm-with-rejection-sampling">Bonus: E-M Algorithm with Rejection sampling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="jax-recipe-iii-multi-class-predictions-with-correlation-multivariate-probit">
+<h1>JAX Recipe III: Multi-class predictions with correlation (Multivariate Probit)<a class="headerlink" href="#jax-recipe-iii-multi-class-predictions-with-correlation-multivariate-probit" title="Link to this heading">#</a></h1>
+<p>In this recipe we will explore how to use JAX to fit multivariate probit models. For one dimensional target response, probit models can be seen as a logistic regression with a different link function (probit - the cdf of a normal distribution vs logit function). When analysing multivariate data, those models have the additional potential of estimating the correlation structure between multiple response variables, even after conditioning on all covariates. This can make those models robust to missing covariates that would be predictive of multiple outcomes.</p>
+<p>For example, let’s imagine that we are interested in modeling a population that can go to two nearby stores, we can record a limited set of covariates (say age, gender, income) and the visits of each individual (<span class="math notranslate nohighlight">\(y_1, y_2 \in \{0, 1\}\)</span>) to each respective store. Since the stores are close by, it is pretty clear that being able to go to the first one will positively impact the possibility of going to the second one, even after demographic covariates have been taken into account.
+From a modeling perspective we could argue that there exists a latent variable that we could interpret as “possibility to go to the area close to the two stores” that is not fully explained by known covariates, and that has a significant impact on each response.</p>
+<p>Those models are interesting in the cases where we need to query the joint distribution between binary responses.
+E.g. answering questions like: how much does going to the first store increase the probability of going to the second store?
+Or what is the probability to going to none of the stores?</p>
+<p>While doing exploring those models, several interesting and more general topics will pop up:</p>
+<ul class="simple">
+<li><p>Optimization of a stochastic loss</p></li>
+<li><p>Speeding up optimization when loss is slow to compute</p></li>
+<li><p>Building confidence intervals for optimizers of those problems</p></li>
+<li><p>Rejection sampling using compiled JAX code</p></li>
+<li><p>Use of sampling for Monte-Carlo EM methods</p></li>
+</ul>
+<section id="model-specification">
+<h2>Model specification<a class="headerlink" href="#model-specification" title="Link to this heading">#</a></h2>
+<section id="notations">
+<h3>Notations<a class="headerlink" href="#notations" title="Link to this heading">#</a></h3>
+<p>Here, we are therefore interested in a multivariate binary response <span class="math notranslate nohighlight">\(y \in R^{n \times q}\)</span> where <span class="math notranslate nohighlight">\(n\)</span> is the sample size, and <span class="math notranslate nohighlight">\(q\)</span> is the number of responses of interest.
+Here, we will study <span class="math notranslate nohighlight">\(q=2\)</span>, but the approach will remain general.</p>
+<p>We are given a set of <span class="math notranslate nohighlight">\(p\)</span> covariates for each sample, which we will concatenate in a single design matrix <span class="math notranslate nohighlight">\(X \in R^{n \times p}\)</span>.
+Those covariates have an influence on each response through some linear parameters <span class="math notranslate nohighlight">\(\beta \in R^{p \times q}\)</span>.</p>
+<p>The noise in the model will come from correlated residuals <span class="math notranslate nohighlight">\(\epsilon_i \sim N(0, \Sigma)\)</span> with <span class="math notranslate nohighlight">\(\Sigma \in R^{q \times q}\)</span> for <span class="math notranslate nohighlight">\(i \in \{ 1, ..., n \}\)</span>.</p>
+<p>Let’s define the <em>continuous response</em> <span class="math notranslate nohighlight">\(y^* = X \beta + \epsilon \)</span>. Note that, to keep notations close to a univariate regression, we will keep lowercase letters, eventhough all quantities involved are now matrices.</p>
+<p>The binary <em>observed</em> response is gotten by setting <span class="math notranslate nohighlight">\(y\)</span> to <span class="math notranslate nohighlight">\(1\)</span> if <span class="math notranslate nohighlight">\(y^*\)</span> is positive, and <span class="math notranslate nohighlight">\(0\)</span> otherwise.</p>
+<p>More formally, <span class="math notranslate nohighlight">\(y_{i,j} = 1(y^*_{i, j} \gt 0)\)</span> for <span class="math notranslate nohighlight">\(i = 1, ..., n\)</span> and <span class="math notranslate nohighlight">\(j = 1, ..., p\)</span></p>
+<p>The discretization creates a slight identification problem between <span class="math notranslate nohighlight">\(\Sigma\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>, since doubling <span class="math notranslate nohighlight">\(\beta\)</span> and the noise leads to the same distribution for <span class="math notranslate nohighlight">\(y\)</span>.
+That is solved by constraining <span class="math notranslate nohighlight">\(\Sigma\)</span>’s diagonal to <span class="math notranslate nohighlight">\(1\)</span>’s.</p>
+</section>
+<section id="interpretation">
+<h3>Interpretation<a class="headerlink" href="#interpretation" title="Link to this heading">#</a></h3>
+<p>While familiar in places, this specification can seem a little cryptic at first. The first thing to realize is that for each response it can be simplified to a univariate probit regression:
+$<span class="math notranslate nohighlight">\( P(y_1 = 1) = P(y^*_1 &gt; 0) = P( (X \beta)_1 + \epsilon_1 &gt; 0) = P( \epsilon_1 &gt; -(X \beta)_1) = \Phi((X \beta)_1) \)</span><span class="math notranslate nohighlight">\(
+(Since \)</span>\epsilon_1<span class="math notranslate nohighlight">\( is a univariate standard normal.), where \)</span>\Phi$ is the cdf of a standard normal.
+This is the same thing as a logistic regression with a probit link instead of a logit link.</p>
+<p>This has the non-trivial implication that the lines of <span class="math notranslate nohighlight">\(\beta\)</span> can be estimated independently via separate univariate probit regressions. We could also add another response to the model as needed (in the example, a third store), and not start from a completely new, unestimated model. This, however, does not tell us how to fit the correlation matrix.</p>
+</section>
+</section>
+<section id="generating-data">
+<h2>Generating data<a class="headerlink" href="#generating-data" title="Link to this heading">#</a></h2>
+<p>Let’s sample some data to play with and understand how to fit and use those models.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax</span>
+<span class="kn">import</span> <span class="nn">jax.random</span> <span class="k">as</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Any</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;ggplot&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Sample data</span>
+<span class="n">key</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">20220526</span><span class="p">)</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">10_000</span> <span class="c1"># Sample size</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># Predictor</span>
+<span class="n">q</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># Targets</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">skey</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">skey</span><span class="p">,</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
+
+<span class="c1"># Covariance matrix</span>
+<span class="n">rho</span> <span class="o">=</span> <span class="mf">0.9</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">rho</span><span class="p">],</span>
+    <span class="p">[</span><span class="n">rho</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">sqrtm</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">sigma</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">rho</span><span class="p">)</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="n">sqrt_r</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">sqrtm</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">eps</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">skey</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span> <span class="o">@</span> <span class="n">u</span>
+
+<span class="n">y_star_mu</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="n">beta</span> <span class="o">+</span> <span class="n">eps</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_star_mu</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">eps</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">eps</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">eps</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Continuous noise distribution&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[0.99999994 0.8991772 ]
+ [0.8991772  1.        ]]
+</pre></div>
+</div>
+<img alt="../_images/723df75a558d5e4d4cd0f82203593bdc73355ba3db94642f4282d7179f985401.png" src="../_images/723df75a558d5e4d4cd0f82203593bdc73355ba3db94642f4282d7179f985401.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">y_star_mu</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y_star_mu</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">y_star_mu</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Continuous response distribution&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[1.         0.37207174]
+ [0.37207174 1.        ]]
+</pre></div>
+</div>
+<img alt="../_images/9e93935035ba8faea641a9439cfcf15a4d42a8bbd4739aaf707d3c515e8be597.png" src="../_images/9e93935035ba8faea641a9439cfcf15a4d42a8bbd4739aaf707d3c515e8be597.png" />
+</div>
+</div>
+<p>We use random covariates and a correlation on the residuals of <span class="math notranslate nohighlight">\(0.9\)</span>. We can see that <span class="math notranslate nohighlight">\(\epsilon\)</span> exhibits this correlation.
+The correlation in <span class="math notranslate nohighlight">\(y^*\)</span> is attributable to X and the residuals (note the different scales on the two plots).</p>
+</section>
+<section id="fitting-marginals">
+<h2>Fitting marginals<a class="headerlink" href="#fitting-marginals" title="Link to this heading">#</a></h2>
+<p>Let’s use the property that each marginal response can be fitted with a univariate probit regression.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fitting without correlation</span>
+<span class="c1"># This loss assumes independence of outcomes given X</span>
+
+<span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="n">beta</span>
+    
+    <span class="n">logcdf</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logcdf</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">logsf</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logcdf</span><span class="p">(</span><span class="o">-</span><span class="n">w</span><span class="p">)</span>
+    
+    <span class="n">log_prob</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="n">logcdf</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">logsf</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">log_prob</span><span class="p">)</span> <span class="o">/</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">loss</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(0.43492714, dtype=float32)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We optimize using BFGS, which requires a flat vector.</span>
+<span class="kn">import</span> <span class="nn">jax.scipy.optimize</span> <span class="k">as</span> <span class="nn">sco</span>
+
+<span class="k">def</span> <span class="nf">loss2</span><span class="p">(</span><span class="n">beta_flat</span><span class="p">):</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">beta_flat</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">loss</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">sco</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">loss2</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">p</span><span class="o">*</span><span class="n">q</span><span class="p">,</span> <span class="p">)),</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BFGS&quot;</span><span class="p">)</span>
+<span class="n">beta_hat</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We compute the standard error using the hessian (see also JAX Recipe II)</span>
+<span class="n">h_beta</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">loss2</span><span class="p">)(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+<span class="n">beta_hat_std</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">h_beta</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">beta_hat</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">yerr</span><span class="o">=</span><span class="mf">1.96</span> <span class="o">*</span> <span class="n">beta_hat_std</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C0&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;beta_hat </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;True beta </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Parameter estimation&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/05ab79945b9ce8ce4ddfbca8386f7e3feeb848f22b8a3e182f85fbca983d76ac.png" src="../_images/05ab79945b9ce8ce4ddfbca8386f7e3feeb848f22b8a3e182f85fbca983d76ac.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">z_scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">beta_hat</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">/</span> <span class="n">beta_hat_std</span>
+<span class="n">z_scores</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">z_scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(Array(-0.52653337, dtype=float32), Array(1.0804694, dtype=float32))
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can see that the fitted values are close to the truth. Standard errors are computed from the hessian, they visually have the right scale and the z-scores have a standard error close to 1. All those things seem to indicate a good fit.</p>
+<p>Are we missing a lot of correlation from there? We should be able to tell by taking a look at the residuals from the univariate regressions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p_y_hat</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span> <span class="o">@</span> <span class="n">beta_hat</span><span class="p">)</span>
+<span class="n">residuals</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">p_y_hat</span>
+<span class="n">jnp</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">residuals</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([[1.        , 0.19038962],
+       [0.19038962, 1.        ]], dtype=float32)
+</pre></div>
+</div>
+</div>
+</div>
+<p>There is indeed about 19% of correlation that is not explained by the covariates in <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<p>Another way to put this effect in perspective is by comparing the probability of both responses being = 1 according to the raw data and the model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># P(Y1 = 1 and Y2 = 1)</span>
+
+<span class="n">p11</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">p11_std</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p11</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p11</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="n">p11</span> <span class="o">+</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">p11_std</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([0.2975628, 0.3156372], dtype=float32)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p11_uni</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">p_y_hat</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="c1"># This does not take into account noise introduced by the estimation of beta</span>
+<span class="n">p11_uni_std</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">p_y_hat</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+<span class="n">p11_uni</span> <span class="o">+</span> <span class="mf">1.96</span> <span class="o">*</span> <span class="n">p11_uni_std</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([0.28471676, 0.29951128], dtype=float32)
+</pre></div>
+</div>
+</div>
+</div>
+<p>The two confidence intervals overlap sightly, and while the test is not completely rigorous (given that both estimators are correlated), assuming independence does seem to lead to a slight underestimation of <span class="math notranslate nohighlight">\(p_{11}\)</span>.
+Depending on the usecase, it might make sense to stop here. We are going to investigate the correlation structure further and see if we can come up with better estimates and model fit.</p>
+</section>
+<section id="fitting-the-correlation-structure">
+<h2>Fitting the correlation structure<a class="headerlink" href="#fitting-the-correlation-structure" title="Link to this heading">#</a></h2>
+<p>The normal distribution is probably the easiest distribution to work with in higher dimensions with correlations. However, the truncation part of the probit model creates a lot of problems when trying to estimate parameters. If the shape of the likelihood is not too disturbed by the truncation, the normalizing constants are obviously impacted and when <span class="math notranslate nohighlight">\(q\)</span> is greater than <span class="math notranslate nohighlight">\(2\)</span>, no analytical formula can be used to write down the likelihood of a multivariate probit model.
+There exists significant litterature on those issues. Here I would like to showcase one of the easier and more scalable idea - even though there are always going to be scalability problems with such models-.</p>
+<p>In <span id="id1">[<a class="reference internal" href="0_references.html#id14" title="Di Chen, Yexiang Xue, and Carla P. Gomes. End-to-End Learning for the Deep Multivariate Probit Model. In Proceedings of the 35th International Conference on Machine Learning, 931–940. PMLR, 2018.">CXG18</a>]</span>, Chen showcases how splitting the covariance matrix into a diagonal and a residual part can help estimate the likelihood by sampling from a normal distribution without truncation. They then show that the diagonal matrix can be reduced to the identity and it only suffices to estimate the residual covariance.</p>
+<p><span class="math notranslate nohighlight">\(\Sigma = I_q + \Sigma_r \)</span> and <span class="math notranslate nohighlight">\(\Sigma_r = s^Ts\)</span> so that <span class="math notranslate nohighlight">\(\Sigma_r\)</span> is constrained to be positive semi definite, i.e. a valid covariance matrix.</p>
+<p>In JAX, the parameters can be regrouped in a NamedTuple as follows, with <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(s\)</span> being the unconstrained parameters, and <span class="math notranslate nohighlight">\(\Sigma\)</span> being completely specified by <span class="math notranslate nohighlight">\(s\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Params</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">beta</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span>
+    <span class="n">s</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sigma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes sigma from the square root of its residual, `s`.&quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">s</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+        <span class="n">sqrt_diag</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">S</span><span class="p">))</span>
+        <span class="c1"># Normalize Sigma to a correlation matrix</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="p">(</span><span class="n">S</span> <span class="o">/</span> <span class="n">sqrt_diag</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">sqrt_diag</span>
+        <span class="k">return</span> <span class="n">S</span>
+
+<span class="n">true_params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">sqrt_r</span><span class="p">)</span>
+<span class="n">true_params</span><span class="p">,</span> <span class="n">true_params</span><span class="o">.</span><span class="n">sigma</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(Params(beta=Array([[ 0.23186858,  0.46960872],
+        [ 1.709085  ,  0.12174629],
+        [ 1.1210241 ,  1.3156708 ],
+        [-0.1811214 ,  1.8010722 ],
+        [-1.1304141 , -0.14554782],
+        [-0.29495806,  0.08470398],
+        [ 0.04848719, -2.4250152 ],
+        [ 1.6395696 ,  0.7269019 ],
+        [-0.6232631 , -0.48760355],
+        [ 0.5079111 ,  1.0722051 ]], dtype=float32), s=Array([[2.1213205, 2.1213202],
+        [2.1213202, 2.1213202]], dtype=float32)),
+ Array([[1.        , 0.90000004],
+        [0.90000004, 1.        ]], dtype=float32))
+</pre></div>
+</div>
+</div>
+</div>
+<p>From there, Chen shows that the likelihood can be estimated with a Monte Carlo estimator based on samples of the normal distribution. See the paper for details. It is worth noting that if <span class="math notranslate nohighlight">\(s = 0\)</span> then the loss is exactly the same as the univariate fits described earlier.</p>
+<p>We note <span class="math notranslate nohighlight">\(m\)</span> the number of Monte-Carlo samples used per sample for each evaluation of the loss / log-likelihood.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="nd">@partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnums</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,))</span>
+<span class="k">def</span> <span class="nf">loss</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">beta</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">s</span>
+    
+    <span class="n">z</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">sigma_scale</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">+</span> <span class="n">s</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">s</span><span class="p">)))</span>
+
+    <span class="n">w</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">sigma_scale</span>  <span class="o">+</span> <span class="n">z</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    
+    <span class="n">logcdf</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logcdf</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">logsf</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">logcdf</span><span class="p">(</span><span class="o">-</span><span class="n">w</span><span class="p">)</span>
+    
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="n">logcdf</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">logsf</span>
+    <span class="n">prod_phi</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">phi</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">prob</span> <span class="o">=</span> <span class="n">prod_phi</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">prob</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">loss</span><span class="p">(</span><span class="n">true_params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.9 s, sys: 145 ms, total: 5.04 s
+Wall time: 845 ms
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(0.4146354, dtype=float32)
+</pre></div>
+</div>
+</div>
+</div>
+<p>At the true parameters, the loss is smaller than the optimal loss found for the univariate fits.
+This <em>at least</em> proves that a model with correlation fits better than a model with independent marginals.</p>
+<p>However, even after JIT compilation, computing the loss can take half a second with <span class="math notranslate nohighlight">\(m=1000\)</span> Monte Carlo samples. This can be a bit slow when trying to find the right parameters. We will adopt a flexible approach that will try to minimize fitting time.</p>
+<section id="parameter-estimation">
+<h3>Parameter estimation<a class="headerlink" href="#parameter-estimation" title="Link to this heading">#</a></h3>
+<p>We choose to minimize the loss by stochastic gradient descent with momentum. The loss being stochastic (because of the Monte-Carlo estimation), gradient methods are more robust. Second order methods use too noisy information in those cases to be reliable. Momentum however is a good idea to smooth the gradient over several iterations of training, which is ideal in cases where the loss has some randomness. Finally the stochastic aspect of the descent (by which we mean using batches of data points instead of the entire dataset at each iteration) will help shorten the computation time of the loss and its gradient.</p>
+<p>Here is the proposed procedure:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">optax</span>
+
+<span class="k">def</span> <span class="nf">fit_params</span><span class="p">(</span>
+    <span class="n">init_params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span>
+    <span class="n">n_iterations</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">lr</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">momentum</span><span class="o">=</span><span class="mf">.9</span><span class="p">,</span>
+    <span class="n">m</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">init_params</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;g_norm&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optax</span><span class="o">.</span><span class="n">sgd</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="n">momentum</span><span class="p">)</span>
+    <span class="n">opt_state</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    
+    <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">):</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">value_and_grad</span><span class="p">(</span><span class="n">loss</span><span class="p">)(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+        <span class="n">updates</span><span class="p">,</span> <span class="n">opt_state</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">optax</span><span class="o">.</span><span class="n">apply_updates</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">updates</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">params</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">):</span>
+        <span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">%</span> <span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="n">batch_size</span><span class="p">)</span>
+        <span class="n">x_batch</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">:</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">]</span>
+        <span class="n">y_batch</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">:</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">]</span>
+        
+        <span class="n">params</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g_norm</span> <span class="o">=</span> <span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x_batch</span><span class="p">,</span> <span class="n">y_batch</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">)</span>
+        <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g_norm</span><span class="p">)</span>
+    
+    <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+    <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="n">params</span><span class="p">,</span> <span class="n">hist</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">optax</span>
+
+
+<span class="k">def</span> <span class="nf">create_batches</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n_iterations</span> <span class="o">=</span> <span class="n">n</span> <span class="o">//</span> <span class="n">batch_size</span>
+    <span class="n">perm</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iterations</span><span class="p">):</span>
+        <span class="n">x_batch</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">]]</span>
+        <span class="n">y_batch</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">perm</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">]]</span>
+        <span class="k">yield</span> <span class="n">x_batch</span><span class="p">,</span> <span class="n">y_batch</span>
+
+
+<span class="k">def</span> <span class="nf">fit_params</span><span class="p">(</span>
+    <span class="n">init_params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span>
+    <span class="n">n_epochs</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">lr</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">momentum</span><span class="o">=</span><span class="mf">.9</span><span class="p">,</span>
+    <span class="n">m</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">init_params</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;g_norm&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optax</span><span class="o">.</span><span class="n">sgd</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="n">momentum</span><span class="p">)</span>
+    <span class="n">opt_state</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    
+    <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">):</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">value_and_grad</span><span class="p">(</span><span class="n">loss</span><span class="p">)(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+        <span class="n">updates</span><span class="p">,</span> <span class="n">opt_state</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">optax</span><span class="o">.</span><span class="n">apply_updates</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">updates</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">params</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_epochs</span><span class="p">):</span>
+        <span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">x_batch</span><span class="p">,</span> <span class="n">y_batch</span> <span class="ow">in</span> <span class="n">create_batches</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+            <span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">params</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g_norm</span> <span class="o">=</span> <span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x_batch</span><span class="p">,</span> <span class="n">y_batch</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">)</span>
+            <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g_norm</span><span class="p">)</span>
+    
+    <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+    <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="n">params</span><span class="p">,</span> <span class="n">hist</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We want to start with <code class="docutils literal notranslate"><span class="pre">m</span></code> and <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> as low as possible to minimize compute times, and increase them if the loss is too unstable to be optimized.
+Both will also influence memory footprint (on CPU and on GPU), therefore picking the highest values that fill your memory is another interesting option.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+
+<span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">(</span>
+    <span class="n">beta</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)),</span>
+    <span class="n">s</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">q</span><span class="p">,</span> <span class="n">q</span><span class="p">)),</span>
+<span class="p">)</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">params</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;avg loss: </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;| std loss </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ad4f21edd87c8b736b3474cf64a9c4754e92b3916e06fe37bccf27d83789d96a.png" src="../_images/ad4f21edd87c8b736b3474cf64a9c4754e92b3916e06fe37bccf27d83789d96a.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4296| std loss  0.0733
+CPU times: user 14 s, sys: 1.54 s, total: 15.5 s
+Wall time: 5.39 s
+</pre></div>
+</div>
+</div>
+</div>
+<p>Loss is at 42.6. And we quickly hit a stage where the loss is stable and noisy.
+We have three choices:</p>
+<ul class="simple">
+<li><p>decrease learning rate</p></li>
+<li><p>increase <code class="docutils literal notranslate"><span class="pre">m</span></code></p></li>
+<li><p>increase <code class="docutils literal notranslate"><span class="pre">batch_size</span></code></p></li>
+</ul>
+<p>(In certain cases, it can help to increase the learning rate, but I would consider it a last resort outside of documented cases).</p>
+<p>Therefore, let’s follow this method and reduce the learning rate:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">saved_params</span> <span class="o">=</span> <span class="n">params</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">params</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;avg loss: </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;| std loss </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/d5beb773092ba8d2c1cc5be41eb1bfa686f5cdf29878ed22a5a979a97f898cee.png" src="../_images/d5beb773092ba8d2c1cc5be41eb1bfa686f5cdf29878ed22a5a979a97f898cee.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4228| std loss  0.0672
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Loss dropped at 41.90, let&#39;s train for longer:</span>
+
+<span class="n">saved_params</span> <span class="o">=</span> <span class="n">params</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">params</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;avg loss: </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;| std loss </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/f47178cc3feae4613255ece0bb9aeb4091b34c0c30974bd848cc0a8af67f5bd2.png" src="../_images/f47178cc3feae4613255ece0bb9aeb4091b34c0c30974bd848cc0a8af67f5bd2.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4206| std loss  0.0841
+</pre></div>
+</div>
+</div>
+</div>
+<p>Loss increased slightly. Let’s see what’s better between increasing batch size and monte-carlo samples.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">saved_params</span> <span class="o">=</span> <span class="n">params</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">params</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;avg loss: </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;| std loss </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">21</span><span class="p">],</span> <span class="n">line</span> <span class="mi">4</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">saved_params</span> <span class="o">=</span> <span class="n">params</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">params</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nn">Cell In[17], line 38,</span> in <span class="ni">fit_params</span><span class="nt">(init_params, x, y, key, n_epochs, batch_size, lr, momentum, m)</span>
+<span class="g g-Whitespace">     </span><span class="mi">36</span> <span class="k">for</span> <span class="n">x_batch</span><span class="p">,</span> <span class="n">y_batch</span> <span class="ow">in</span> <span class="n">create_batches</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+<span class="g g-Whitespace">     </span><span class="mi">37</span>     <span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">38</span>     <span class="n">params</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g_norm</span> <span class="o">=</span> <span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x_batch</span><span class="p">,</span> <span class="n">y_batch</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">39</span>     <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">40</span>     <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g_norm</span><span class="p">)</span>
+
+<span class="nn">File &lt;string&gt;:1,</span> in <span class="ni">&lt;lambda&gt;</span><span class="nt">(_cls, beta, s)</span>
+
+<span class="ne">KeyboardInterrupt</span>: 
+</pre></div>
+</div>
+</div>
+</div>
+<p>Loss decreased slightly. Let’s load the previous checkpoint and test increasing batch size.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">saved_params</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">params</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;avg loss: </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;| std loss </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/bab2ab9be2f0c419d9743911723a6ee0f8218a56988d86038067ab905e2bf221.png" src="../_images/bab2ab9be2f0c419d9743911723a6ee0f8218a56988d86038067ab905e2bf221.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4164| std loss  0.0199
+</pre></div>
+</div>
+</div>
+</div>
+<p>Loss decreased, and its standard error is much lower. Let’s train this way for longer:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">saved_params</span> <span class="o">=</span> <span class="n">params</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">params</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;avg loss: </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;| std loss </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/6dda23e1ba9f59024b8d566fdc26108b5a1eebe85d944dc040ca8b6b148a2f0b.png" src="../_images/6dda23e1ba9f59024b8d566fdc26108b5a1eebe85d944dc040ca8b6b148a2f0b.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4171| std loss  0.0216
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+
+<span class="c1"># loss is stable again. Let&#39;s try to increase MC samples</span>
+
+<span class="n">saved_params</span> <span class="o">=</span> <span class="n">params</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">params</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;avg loss: </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;| std loss </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/6dea64742641c6dd636bef16d2b8bdcd019c765403135b5045c9163d528c07f0.png" src="../_images/6dea64742641c6dd636bef16d2b8bdcd019c765403135b5045c9163d528c07f0.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4135| std loss  0.0214
+CPU times: user 3min 2s, sys: 25.2 s, total: 3min 28s
+Wall time: 38.9 s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># Loss improved, let&#39;s keep going</span>
+
+<span class="n">saved_params</span> <span class="o">=</span> <span class="n">params</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">params</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;avg loss: </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;| std loss </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/b1227f0066bdaa6f76710f94741d2aabc1a26df0574e0225f2e3674ea12529d9.png" src="../_images/b1227f0066bdaa6f76710f94741d2aabc1a26df0574e0225f2e3674ea12529d9.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4135| std loss  0.0164
+CPU times: user 3min, sys: 25.5 s, total: 3min 26s
+Wall time: 38.9 s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># Loss is stable. Compute time is as high as I am willing to wait. Let&#39;s try to reduce learning rate.</span>
+
+<span class="n">saved_params</span> <span class="o">=</span> <span class="n">params</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">params</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;avg loss: </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;| std loss </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/bca71a0eb343102986f33c8509c8210ebe94b538a1cd683380fcaa70fa7d3278.png" src="../_images/bca71a0eb343102986f33c8509c8210ebe94b538a1cd683380fcaa70fa7d3278.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4132| std loss  0.0192
+CPU times: user 2min 52s, sys: 25.2 s, total: 3min 17s
+Wall time: 38.2 s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="c1"># Loss is stable. Compute time is as high as I am willing to wait. Let&#39;s try to reduce learning rate.</span>
+
+<span class="n">saved_params</span> <span class="o">=</span> <span class="n">params</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">params</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;avg loss: </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;| std loss </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">.</span><span class="n">std</span><span class="p">()</span><span class="si">:</span><span class="s2"> .4f</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/cb32cc84b24b248156a09fce8f9fdbd06bc3ddb54de4d3035f91179a34c80c83.png" src="../_images/cb32cc84b24b248156a09fce8f9fdbd06bc3ddb54de4d3035f91179a34c80c83.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4129| std loss  0.0080
+CPU times: user 11min 13s, sys: 1min 25s, total: 12min 39s
+Wall time: 2min 14s
+</pre></div>
+</div>
+</div>
+</div>
+<p>Loss has stopped improving. We can keep going to try to minimize further, but we reached a decent point. Let’s consider this model trained and pursue our analysis.</p>
+</section>
+<section id="point-estimates">
+<h3>Point estimates<a class="headerlink" href="#point-estimates" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params</span><span class="o">.</span><span class="n">sigma</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([[1.        , 0.82707417],
+       [0.82707417, 1.        ]], dtype=float32)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">params</span><span class="o">.</span><span class="n">beta</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C0&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;beta_hat full</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">beta_hat</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;beta_hat uni </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C2&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;True beta </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/69ff1616287a165a024bed52a9f24b873afb472720f649364da6fc307a6c45e3.png" src="../_images/69ff1616287a165a024bed52a9f24b873afb472720f649364da6fc307a6c45e3.png" />
+</div>
+</div>
+<p>The correlation is at 83%, while the truth is at 90%.
+<span class="math notranslate nohighlight">\(\beta\)</span> as estimated from the full model is undistiguishable from <span class="math notranslate nohighlight">\(\beta\)</span> estimated by univariate methods.</p>
+<p>The point estimates are therefore convincing. The optimal loss is at 0.413 which is smaller than the loss at the true values (0.4146)</p>
+</section>
+<section id="confidence-intervals">
+<h3>Confidence intervals<a class="headerlink" href="#confidence-intervals" title="Link to this heading">#</a></h3>
+<p>Eventhough the loss function is evaluated by a Monte-Carlo method, and the optimization is complex. We propose the following way to get confidence intervals for each parameters.</p>
+<p>For <span class="math notranslate nohighlight">\(\beta\)</span> we can essentially follow the same hessian-based method as the univariate methods:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># standard errors on beta</span>
+
+<span class="k">def</span> <span class="nf">loss3</span><span class="p">(</span><span class="n">beta_flat</span><span class="p">):</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">beta_flat</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">loss</span><span class="p">(</span><span class="n">Params</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">s</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+
+<span class="n">h_beta</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">loss3</span><span class="p">))(</span><span class="n">params</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">std_beta</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">h_beta</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span><span class="p">))</span>
+<span class="n">std_beta</span> <span class="o">=</span> <span class="n">std_beta</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">params</span><span class="o">.</span><span class="n">beta</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">yerr</span><span class="o">=</span><span class="mf">1.96</span> <span class="o">*</span> <span class="n">std_beta</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C0&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;beta_hat full</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">beta_hat</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;beta_hat uni </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C2&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;True beta </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">z_scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">beta</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">/</span> <span class="n">std_beta</span>
+<span class="n">z_scores</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">z_scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/36e6ed3b2ccfa39eeda2c6a191304abbf61438fb784794c2509083735041a131.png" src="../_images/36e6ed3b2ccfa39eeda2c6a191304abbf61438fb784794c2509083735041a131.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(Array(-0.5751055, dtype=float32), Array(1.1819036, dtype=float32))
+</pre></div>
+</div>
+</div>
+</div>
+<p>The standard errors look reasonable and the z-scores have a standard error of around 1.2, where we would have expected something closer to 1.
+They may therefore a bit larger than what they should be.</p>
+<section id="confidence-interval-for-sigma-work-in-progress">
+<h4>Confidence interval for <span class="math notranslate nohighlight">\(\Sigma\)</span> (Work in progress)<a class="headerlink" href="#confidence-interval-for-sigma-work-in-progress" title="Link to this heading">#</a></h4>
+<p>Getting a confidence interval for the correlation may prove a bit harder since we estimated <span class="math notranslate nohighlight">\(s\)</span> which is an overparametrization of the covariance matrix. An other difficulty is that it is more complicated to get <span class="math notranslate nohighlight">\(s\)</span> from sigma than the reverse. To get <span class="math notranslate nohighlight">\(s\)</span> from <span class="math notranslate nohighlight">\(\Sigma\)</span>, we need to find the square root of the matrix, which can involve diagonilisation and heavier linear algebra. This heavier linear algebra is in particular more difficult to differentiate (at least for JAX) and my attempts to directly write the likelihood as a function of <span class="math notranslate nohighlight">\(\Sigma\)</span> have failed.</p>
+<p>It is, however significantly easier to transform <span class="math notranslate nohighlight">\(s\)</span> to <span class="math notranslate nohighlight">\(\Sigma\)</span> by the function we laid out during the parametrization step. The idea is therefore to use the Delta method on the approximate distribution that <span class="math notranslate nohighlight">\(s\)</span> follows to get an approximate normal distribution for <span class="math notranslate nohighlight">\(\Sigma\)</span>. Here since <span class="math notranslate nohighlight">\(q=2\)</span>, we will focus on the only off-diagonal term <span class="math notranslate nohighlight">\(\rho\)</span> which is the correlation between the two residual responses.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># First, let&#39;s estimate the distribution of s</span>
+
+<span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">loss2</span><span class="p">(</span><span class="n">s_flat</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s_flat</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">loss</span><span class="p">(</span><span class="n">Params</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+
+<span class="n">hloss2</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">hessian</span><span class="p">(</span><span class="n">loss2</span><span class="p">))</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">hloss2</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">cov_s</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span>
+<span class="n">cov_s</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([[-0.05073601, -0.09917498, -0.08121364, -0.04659434],
+       [-0.09917454, -0.04345205, -0.04309906, -0.08628308],
+       [-0.08121356, -0.04309898,  0.0459978 , -0.04623628],
+       [-0.04659341, -0.08628242, -0.04623552,  0.04944843]],      dtype=float32)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now, we are supposed to have the covariance of <span class="math notranslate nohighlight">\(s\)</span> (per the maximum likelihod estimation).</p>
+<p>Thanks to the Delta method, if <span class="math notranslate nohighlight">\(\hat s \sim N(s, \Sigma_s)\)</span> and <span class="math notranslate nohighlight">\(\rho = f(s)\)</span>
+then we should have $<span class="math notranslate nohighlight">\( \hat \rho = f(\hat s) \sim N(f(s) = \rho, \nabla_s f^T  \Sigma_s \nabla_s f)\)</span><span class="math notranslate nohighlight">\( as long as the variations of \)</span>s<span class="math notranslate nohighlight">\( are within a fairly linear portion of \)</span>f$.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># s to rho</span>
+<span class="k">def</span> <span class="nf">s_to_rho</span><span class="p">(</span><span class="n">s_flat</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s_flat</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">s</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">sqrt_diag</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">S</span><span class="p">))</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">(</span><span class="n">S</span> <span class="o">/</span> <span class="n">sqrt_diag</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">sqrt_diag</span>
+    <span class="k">return</span> <span class="n">S</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="n">s_to_rho</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+<span class="n">g_s</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">s_to_rho</span><span class="p">)(</span><span class="n">params</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">v_rho</span> <span class="o">=</span> <span class="n">g_s</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">cov_s</span> <span class="o">@</span> <span class="n">g_s</span>
+<span class="n">std_rho</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v_rho</span><span class="p">)</span>
+<span class="n">std_rho</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(0.02546195, dtype=float32)
+</pre></div>
+</div>
+</div>
+</div>
+<p>This seems to conclude that the standard error on <span class="math notranslate nohighlight">\(\hat \rho\)</span> is about 3%.
+It is a bit hard to validate since bootstrapping would be very slow. At a minimum, it is believeable.</p>
+<p>Note that there are unadressed theoretical problems with this approach:</p>
+<ul class="simple">
+<li><p>The attentive reader may have noticed that the “Covariance” for <span class="math notranslate nohighlight">\(s\)</span> is not positive semi-definite. This prevents it from being a valid covariance matrix. Moreover, maximum likelihood estimation applies when the model is identifiable, which is not the case here as several different s can lead to the same <span class="math notranslate nohighlight">\(\Sigma\)</span>.</p></li>
+<li><p>Nonetheless, when repeating the computation with different random seeds, the standard error for rho is stable, which at least does not indicate any numerical instability.</p></li>
+<li><p>There is therefore work to be done to confirm or falsify this procedure to get standard errors for <span class="math notranslate nohighlight">\(\rho\)</span>.</p></li>
+</ul>
+<p>Let’s plot the loss as a function of rho</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">rho_to_s</span><span class="p">(</span><span class="n">rho</span><span class="p">):</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">rho</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">rho</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">])</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">sigma</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">rho</span><span class="p">)</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">sqrt_r</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">sqrtm</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">sqrt_r</span>
+
+
+<span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">rho_s</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">.80</span><span class="p">,</span> <span class="mf">.95</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">rho</span> <span class="ow">in</span> <span class="n">rho_s</span><span class="p">:</span>
+    <span class="c1"># key, skey = random.split(key)</span>
+    <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">(</span><span class="n">Params</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">rho_to_s</span><span class="p">(</span><span class="n">rho</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">4_000</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho_s</span><span class="p">,</span> <span class="n">losses</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7854b4497910&gt;]
+</pre></div>
+</div>
+<img alt="../_images/dea2b4d4a8aba769031c07028b429c5c766f306f83c639a220262d055e871896.png" src="../_images/dea2b4d4a8aba769031c07028b429c5c766f306f83c639a220262d055e871896.png" />
+</div>
+</div>
+<p>Graphically, there seems to be an obvious minimum at 91 (close to 90 +/- 3%). However, our procedure estimated 82.5%.
+Clearly optimizing the noisy loss function is not trivial!</p>
+</section>
+</section>
+</section>
+<section id="bonus-e-m-algorithm-with-rejection-sampling">
+<h2>Bonus: E-M Algorithm with Rejection sampling<a class="headerlink" href="#bonus-e-m-algorithm-with-rejection-sampling" title="Link to this heading">#</a></h2>
+<p>Given the hierachical nature of the model, some form of E-M algorithm can be used to fit parameters.
+One of the main advantage is that gradients are not needed for this procedure.
+One of the drawback is that it relies on the ability to sample from a truncated normal distribution in a decent amount of time.
+There is a vast litterature on sampling from truncated normal, and it is generally not an easy task.
+Here, we can implement it using rejection sampling. That is to say, we sample from the desired normal distribution until the sample falls in the right quadrant of the space.
+This makes the procedure compute in random time. The probability of a single step being successful will be proportional to the amount of probability mass that remains within the desired quadrant.</p>
+<p>For more details, see <a class="reference external" href="https://en.wikipedia.org/wiki/Probit_model#Gibbs_sampling">Wikipedia</a></p>
+<p>The following  procedure can be used to sample from a truncated normal distribution:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">jax.lax</span> <span class="k">as</span> <span class="nn">lax</span>
+
+<span class="c1"># want to count number of trials before getting a sample</span>
+
+<span class="k">def</span> <span class="nf">trunc_normal_once</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sqrt_cov</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Basic rejection sampling&quot;&quot;&quot;</span>
+    <span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">+</span> <span class="n">sqrt_cov</span> <span class="o">@</span> <span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">skey</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">cond</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">key</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">u</span> <span class="o">*</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">body</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+        <span class="n">key</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">+</span> <span class="n">sqrt_cov</span> <span class="o">@</span> <span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">skey</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">key</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">n</span>
+    
+    <span class="n">key</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">while_loop</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">u</span><span class="p">,</span> <span class="n">n</span>
+
+<span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span> <span class="nf">trunc_normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">):</span>
+    <span class="n">sqrt_cov</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">sqrtm</span><span class="p">(</span><span class="n">cov</span><span class="p">))</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mf">.5</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="n">trunc_normal_once</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">))(</span><span class="n">keys</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sqrt_cov</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">u</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="n">beta</span>
+<span class="n">sigma</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([[1. , 0.9],
+       [0.9, 1. ]], dtype=float32)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Using this procedure, we can sample a likely <span class="math notranslate nohighlight">\(y^*\)</span> given <span class="math notranslate nohighlight">\(y\)</span>, <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\Sigma\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="n">y_star_sample</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">trunc_normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 6.89 s, sys: 1.53 s, total: 8.42 s
+Wall time: 2.82 s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># To sanity check, we can plot the sample against its expected value</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">y_star_mu</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">y_star_sample</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/7abd8380927ea5fb2ed84d553e6f844188ad6c87f64e131f35e50c07d5757dad.png" src="../_images/7abd8380927ea5fb2ed84d553e6f844188ad6c87f64e131f35e50c07d5757dad.png" />
+</div>
+</div>
+<p>From there, it is easy to check that <span class="math notranslate nohighlight">\(y^*\)</span> has the desired variance and correlation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">eps</span> <span class="o">=</span> <span class="n">y_star_sample</span> <span class="o">-</span> <span class="n">mean</span>
+<span class="n">jnp</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">eps</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">eps</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">eps</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(Array([-0.0016255 ,  0.00129633], dtype=float32),
+ Array([1.0060968, 1.0028441], dtype=float32),
+ Array([[1.       , 0.9011806],
+        [0.9011806, 1.       ]], dtype=float32))
+</pre></div>
+</div>
+</div>
+</div>
+<p>If we know <span class="math notranslate nohighlight">\(y^*\)</span> and <span class="math notranslate nohighlight">\(x\)</span>, it is easy to estimate <span class="math notranslate nohighlight">\(\beta\)</span>, since the problem is a simple linear regression in the continuous / starred space.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># fit multivariate linear regression</span>
+<span class="n">beta_hat</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">y_star_mu</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check correctness</span>
+<span class="n">beta_hat</span> <span class="o">/</span> <span class="n">beta</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array([[1.0243322 , 1.0189387 ],
+       [0.9974448 , 0.97601026],
+       [0.9831262 , 0.9877366 ],
+       [1.0184389 , 0.99906915],
+       [0.99103063, 0.9252699 ],
+       [0.98279214, 1.0952549 ],
+       [0.6354604 , 1.0071455 ],
+       [0.99918485, 1.0012058 ],
+       [1.0074484 , 1.0122432 ],
+       [0.9906767 , 0.9956854 ]], dtype=float32)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We now have all the tools to fit the mutlivariate probit using E-M / Gibbs sampling.
+The idea is to iterate the following steps:</p>
+<ul class="simple">
+<li><p>given a candidate <span class="math notranslate nohighlight">\(\hat\beta\)</span>, and <span class="math notranslate nohighlight">\(y\)</span>, we sample <span class="math notranslate nohighlight">\(\hat y^*\)</span> from the corresponding truncated normal</p></li>
+<li><p>given the new candidate <span class="math notranslate nohighlight">\(\hat y^*\)</span>, we compute a new <span class="math notranslate nohighlight">\(\hat\beta\)</span> by solving a linear regression in the continuous / starred space.</p></li>
+</ul>
+<p>The following procedure implements this idea:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+
+<span class="c1"># attempt at fitting by EM</span>
+
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+
+<span class="k">def</span> <span class="nf">fit_em</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+    <span class="n">beta_hat</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">sigma_hat</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;beta&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">beta_hat</span><span class="p">],</span>
+        <span class="s1">&#39;sigma&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">sigma_hat</span><span class="p">],</span>
+    <span class="p">}</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="n">beta_hat</span>
+        <span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        
+        <span class="n">y_star_sample</span><span class="p">,</span> <span class="n">n_interations</span> <span class="o">=</span> <span class="n">trunc_normal</span><span class="p">(</span><span class="n">skey</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sigma_hat</span><span class="p">)</span>
+        <span class="n">beta_hat</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">y_star_sample</span><span class="p">)</span>
+        <span class="n">eps</span> <span class="o">=</span> <span class="n">y_star_sample</span> <span class="o">-</span> <span class="n">mean</span>
+        <span class="n">sigma_hat</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">eps</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">sqrt_diag</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">sigma_hat</span><span class="p">))</span>
+        <span class="n">sigma_hat</span> <span class="o">=</span> <span class="p">(</span><span class="n">sigma_hat</span> <span class="o">/</span> <span class="n">sqrt_diag</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">sqrt_diag</span>
+        
+        <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">beta_hat</span><span class="p">)</span>
+        <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;sigma&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sigma_hat</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">=}</span><span class="s2">, &quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;norm(beta_hat - beta)=</span><span class="si">{</span><span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">beta_hat</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">beta</span><span class="p">)</span><span class="si">:</span><span class="s2"> .2f</span><span class="si">}</span><span class="s2">, &quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;rho=</span><span class="si">{</span><span class="n">sigma_hat</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2"> .2f</span><span class="si">}</span><span class="s2">, &quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;iteration_time=</span><span class="si">{</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">:</span><span class="s2"> .2f</span><span class="si">}</span><span class="s2">, &quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;max_n_iterations=</span><span class="si">{</span><span class="n">n_interations</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2"> .2f</span><span class="si">}</span><span class="s2">&quot;</span>
+                  <span class="p">)</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">beta_hat</span><span class="p">,</span> <span class="n">sigma_hat</span><span class="p">,</span> <span class="n">hist</span>
+
+<span class="n">beta_hat</span><span class="p">,</span> <span class="n">sigma_hat</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_em</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>i=0, norm(beta_hat - beta)= 3.85, rho= 0.14, iteration_time= 0.07, max_n_iterations= 35.00
+i=10, norm(beta_hat - beta)= 2.05, rho= 0.22, iteration_time= 0.74, max_n_iterations= 82.00
+i=20, norm(beta_hat - beta)= 1.44, rho= 0.26, iteration_time= 2.69, max_n_iterations= 90.00
+i=30, norm(beta_hat - beta)= 1.14, rho= 0.35, iteration_time= 5.03, max_n_iterations= 268.00
+i=40, norm(beta_hat - beta)= 0.91, rho= 0.39, iteration_time= 4.74, max_n_iterations= 296.00
+i=50, norm(beta_hat - beta)= 0.71, rho= 0.46, iteration_time= 11.10, max_n_iterations= 744.00
+i=60, norm(beta_hat - beta)= 0.56, rho= 0.53, iteration_time= 11.12, max_n_iterations= 500.00
+i=70, norm(beta_hat - beta)= 0.45, rho= 0.57, iteration_time= 7.79, max_n_iterations= 400.00
+i=80, norm(beta_hat - beta)= 0.37, rho= 0.61, iteration_time= 14.60, max_n_iterations= 2548.00
+i=90, norm(beta_hat - beta)= 0.37, rho= 0.65, iteration_time= 8.48, max_n_iterations= 785.00
+i=100, norm(beta_hat - beta)= 0.42, rho= 0.70, iteration_time= 11.90, max_n_iterations= 1548.00
+CPU times: user 4min 22s, sys: 1min 9s, total: 5min 32s
+Wall time: 1min 18s
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can see that within a minute, we get closer to the real <span class="math notranslate nohighlight">\(\beta\)</span>, and that <span class="math notranslate nohighlight">\(\rho\)</span> is getting closer to its real value.
+Notice that iteration time also steadily increases. This is because it becomes harder and harder to sample from the truncated normal.
+The probability to fall in the right quadrant is smaller and smaller because the correlation is higher.
+In practice, this procedure converges to the right answer in about 2 hours because of the sampling bottleneck!
+There is no free lunch here, the gradient-based version leads to a noisy loss, and the sampling procedure yields to a slow convergence.</p>
+<p>One advantage of the gradient method is that it can be directly plugged into a deep neural network.
+In the E-M case, the neural net would have to learn from data that keeps being sampled. I am not sure if that’s better or worse, it’s simply different.</p>
+</section>
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>In this post, we discovered the multivariate probit, and its elegant formulation as the discretization of a nice, continuous problem.</p></li>
+<li><p>We saw how the discretization poses major issues to gradient-based optimizations as well as sampling based inference.</p></li>
+<li><p>JAX helped us get the most of our compute platform by jitting most functions, and computing gradients through monte-carlo estimates.</p></li>
+</ul>
+<p>I hope this adds a string to your bow!</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">The AV blog</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="2_optimization_patterns.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">JAX Recipe II: Optimization patterns</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-specification">Model specification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#notations">Notations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretation">Interpretation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-data">Generating data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-marginals">Fitting marginals</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-the-correlation-structure">Fitting the correlation structure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-estimation">Parameter estimation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#point-estimates">Point estimates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-intervals">Confidence intervals</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#confidence-interval-for-sigma-work-in-progress">Confidence interval for <span class="math notranslate nohighlight">\(\Sigma\)</span> (Work in progress)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bonus-e-m-algorithm-with-rejection-sampling">Bonus: E-M Algorithm with Rejection sampling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Arthur Vivé
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
