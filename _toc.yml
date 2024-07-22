@@ -7,3 +7,4 @@ chapters:
 - file: chapters/7h_multivariate_probit_regression
 - file: chapters/2_optimization_patterns
 - file: chapters/1_linear_regression
+- file: chapters/0_references
