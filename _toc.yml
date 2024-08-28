@@ -4,6 +4,7 @@
 format: jb-book
 root: intro
 chapters:
+- file: chapters/8_adversarial_domain_adaptation
 - file: chapters/7h_multivariate_probit_regression
 - file: chapters/2_optimization_patterns
 - file: chapters/1_linear_regression
