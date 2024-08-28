@@ -63,7 +63,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="JAX Recipe II: Optimization patterns" href="2_optimization_patterns.html" />
-    <link rel="prev" title="The AV blog" href="../intro.html" />
+    <link rel="prev" title="Adversarial domain adaptation" href="8_adversarial_domain_adaptation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -182,6 +182,7 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="8_adversarial_domain_adaptation.html">Adversarial domain adaptation</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">JAX Recipe III: Multi-class predictions with correlation (Multivariate Probit)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="2_optimization_patterns.html">JAX Recipe II: Optimization patterns</a></li>
 <li class="toctree-l1"><a class="reference internal" href="1_linear_regression.html">JAX Recipe I: Hello, World! (Linear regression)</a></li>
@@ -716,7 +717,7 @@ Depending on the usecase, it might make sense to stop here. We are going to inve
 <h2>Fitting the correlation structure<a class="headerlink" href="#fitting-the-correlation-structure" title="Link to this heading">#</a></h2>
 <p>The normal distribution is probably the easiest distribution to work with in higher dimensions with correlations. However, the truncation part of the probit model creates a lot of problems when trying to estimate parameters. If the shape of the likelihood is not too disturbed by the truncation, the normalizing constants are obviously impacted and when <span class="math notranslate nohighlight">\(q\)</span> is greater than <span class="math notranslate nohighlight">\(2\)</span>, no analytical formula can be used to write down the likelihood of a multivariate probit model.
 There exists significant litterature on those issues. Here I would like to showcase one of the easier and more scalable idea - even though there are always going to be scalability problems with such models-.</p>
-<p>In <span id="id1">[<a class="reference internal" href="0_references.html#id14" title="Di Chen, Yexiang Xue, and Carla P. Gomes. End-to-End Learning for the Deep Multivariate Probit Model. In Proceedings of the 35th International Conference on Machine Learning, 931–940. PMLR, 2018.">CXG18</a>]</span>, Chen showcases how splitting the covariance matrix into a diagonal and a residual part can help estimate the likelihood by sampling from a normal distribution without truncation. They then show that the diagonal matrix can be reduced to the identity and it only suffices to estimate the residual covariance.</p>
+<p>In <span id="id1">[<a class="reference internal" href="0_references.html#id15" title="Di Chen, Yexiang Xue, and Carla P. Gomes. End-to-End Learning for the Deep Multivariate Probit Model. In Proceedings of the 35th International Conference on Machine Learning, 931–940. PMLR, 2018.">CXG18</a>]</span>, Chen showcases how splitting the covariance matrix into a diagonal and a residual part can help estimate the likelihood by sampling from a normal distribution without truncation. They then show that the diagonal matrix can be reduced to the identity and it only suffices to estimate the residual covariance.</p>
 <p><span class="math notranslate nohighlight">\(\Sigma = I_q + \Sigma_r \)</span> and <span class="math notranslate nohighlight">\(\Sigma_r = s^Ts\)</span> so that <span class="math notranslate nohighlight">\(\Sigma_r\)</span> is constrained to be positive semi definite, i.e. a valid covariance matrix.</p>
 <p>In JAX, the parameters can be regrouped in a NamedTuple as follows, with <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(s\)</span> being the unconstrained parameters, and <span class="math notranslate nohighlight">\(\Sigma\)</span> being completely specified by <span class="math notranslate nohighlight">\(s\)</span>.</p>
 <div class="cell docutils container">
@@ -793,8 +794,8 @@ There exists significant litterature on those issues. Here I would like to showc
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.9 s, sys: 145 ms, total: 5.04 s
-Wall time: 845 ms
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 4.82 s, sys: 156 ms, total: 4.98 s
+Wall time: 902 ms
 </pre></div>
 </div>
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Array(0.4146354, dtype=float32)
@@ -928,8 +929,8 @@ Both will also influence memory footprint (on CPU and on GPU), therefore picking
 <div class="cell_output docutils container">
 <img alt="../_images/ad4f21edd87c8b736b3474cf64a9c4754e92b3916e06fe37bccf27d83789d96a.png" src="../_images/ad4f21edd87c8b736b3474cf64a9c4754e92b3916e06fe37bccf27d83789d96a.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4296| std loss  0.0733
-CPU times: user 14 s, sys: 1.54 s, total: 15.5 s
-Wall time: 5.39 s
+CPU times: user 13.7 s, sys: 1.21 s, total: 14.9 s
+Wall time: 5.41 s
 </pre></div>
 </div>
 </div>
@@ -1009,25 +1010,8 @@ We have three choices:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">21</span><span class="p">],</span> <span class="n">line</span> <span class="mi">4</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">saved_params</span> <span class="o">=</span> <span class="n">params</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">params</span><span class="p">,</span> <span class="n">hist</span> <span class="o">=</span> <span class="n">fit_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">])</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="nn">Cell In[17], line 38,</span> in <span class="ni">fit_params</span><span class="nt">(init_params, x, y, key, n_epochs, batch_size, lr, momentum, m)</span>
-<span class="g g-Whitespace">     </span><span class="mi">36</span> <span class="k">for</span> <span class="n">x_batch</span><span class="p">,</span> <span class="n">y_batch</span> <span class="ow">in</span> <span class="n">create_batches</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
-<span class="g g-Whitespace">     </span><span class="mi">37</span>     <span class="n">key</span><span class="p">,</span> <span class="n">skey</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">38</span>     <span class="n">params</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g_norm</span> <span class="o">=</span> <span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x_batch</span><span class="p">,</span> <span class="n">y_batch</span><span class="p">,</span> <span class="n">skey</span><span class="p">,</span> <span class="n">opt_state</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">39</span>     <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">40</span>     <span class="n">hist</span><span class="p">[</span><span class="s1">&#39;g_norm&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g_norm</span><span class="p">)</span>
-
-<span class="nn">File &lt;string&gt;:1,</span> in <span class="ni">&lt;lambda&gt;</span><span class="nt">(_cls, beta, s)</span>
-
-<span class="ne">KeyboardInterrupt</span>: 
+<img alt="../_images/a0fccc834c9401660ae126044cedd6c16deb36af28b1fd60c97551eae2ba4af8.png" src="../_images/a0fccc834c9401660ae126044cedd6c16deb36af28b1fd60c97551eae2ba4af8.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4175| std loss  0.0580
 </pre></div>
 </div>
 </div>
@@ -1103,8 +1087,8 @@ We have three choices:</p>
 <div class="cell_output docutils container">
 <img alt="../_images/6dea64742641c6dd636bef16d2b8bdcd019c765403135b5045c9163d528c07f0.png" src="../_images/6dea64742641c6dd636bef16d2b8bdcd019c765403135b5045c9163d528c07f0.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4135| std loss  0.0214
-CPU times: user 3min 2s, sys: 25.2 s, total: 3min 28s
-Wall time: 38.9 s
+CPU times: user 3min 19s, sys: 25.3 s, total: 3min 44s
+Wall time: 38.5 s
 </pre></div>
 </div>
 </div>
@@ -1131,8 +1115,8 @@ Wall time: 38.9 s
 <div class="cell_output docutils container">
 <img alt="../_images/b1227f0066bdaa6f76710f94741d2aabc1a26df0574e0225f2e3674ea12529d9.png" src="../_images/b1227f0066bdaa6f76710f94741d2aabc1a26df0574e0225f2e3674ea12529d9.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4135| std loss  0.0164
-CPU times: user 3min, sys: 25.5 s, total: 3min 26s
-Wall time: 38.9 s
+CPU times: user 3min 17s, sys: 25.7 s, total: 3min 43s
+Wall time: 38.5 s
 </pre></div>
 </div>
 </div>
@@ -1159,8 +1143,8 @@ Wall time: 38.9 s
 <div class="cell_output docutils container">
 <img alt="../_images/bca71a0eb343102986f33c8509c8210ebe94b538a1cd683380fcaa70fa7d3278.png" src="../_images/bca71a0eb343102986f33c8509c8210ebe94b538a1cd683380fcaa70fa7d3278.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4132| std loss  0.0192
-CPU times: user 2min 52s, sys: 25.2 s, total: 3min 17s
-Wall time: 38.2 s
+CPU times: user 3min 18s, sys: 25.1 s, total: 3min 43s
+Wall time: 38.5 s
 </pre></div>
 </div>
 </div>
@@ -1187,8 +1171,8 @@ Wall time: 38.2 s
 <div class="cell_output docutils container">
 <img alt="../_images/cb32cc84b24b248156a09fce8f9fdbd06bc3ddb54de4d3035f91179a34c80c83.png" src="../_images/cb32cc84b24b248156a09fce8f9fdbd06bc3ddb54de4d3035f91179a34c80c83.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>avg loss:  0.4129| std loss  0.0080
-CPU times: user 11min 13s, sys: 1min 25s, total: 12min 39s
-Wall time: 2min 14s
+CPU times: user 11min 45s, sys: 1min 22s, total: 13min 7s
+Wall time: 2min 12s
 </pre></div>
 </div>
 </div>
@@ -1368,7 +1352,7 @@ It is a bit hard to validate since bootstrapping would be very slow. At a minimu
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7854b4497910&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x72965719cbd0&gt;]
 </pre></div>
 </div>
 <img alt="../_images/dea2b4d4a8aba769031c07028b429c5c766f306f83c639a220262d055e871896.png" src="../_images/dea2b4d4a8aba769031c07028b429c5c766f306f83c639a220262d055e871896.png" />
@@ -1448,8 +1432,8 @@ This makes the procedure compute in random time. The probability of a single ste
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 6.89 s, sys: 1.53 s, total: 8.42 s
-Wall time: 2.82 s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU times: user 6.78 s, sys: 1.72 s, total: 8.5 s
+Wall time: 2.63 s
 </pre></div>
 </div>
 </div>
@@ -1567,19 +1551,19 @@ The idea is to iterate the following steps:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>i=0, norm(beta_hat - beta)= 3.85, rho= 0.14, iteration_time= 0.07, max_n_iterations= 35.00
-i=10, norm(beta_hat - beta)= 2.05, rho= 0.22, iteration_time= 0.74, max_n_iterations= 82.00
-i=20, norm(beta_hat - beta)= 1.44, rho= 0.26, iteration_time= 2.69, max_n_iterations= 90.00
-i=30, norm(beta_hat - beta)= 1.14, rho= 0.35, iteration_time= 5.03, max_n_iterations= 268.00
-i=40, norm(beta_hat - beta)= 0.91, rho= 0.39, iteration_time= 4.74, max_n_iterations= 296.00
-i=50, norm(beta_hat - beta)= 0.71, rho= 0.46, iteration_time= 11.10, max_n_iterations= 744.00
-i=60, norm(beta_hat - beta)= 0.56, rho= 0.53, iteration_time= 11.12, max_n_iterations= 500.00
-i=70, norm(beta_hat - beta)= 0.45, rho= 0.57, iteration_time= 7.79, max_n_iterations= 400.00
-i=80, norm(beta_hat - beta)= 0.37, rho= 0.61, iteration_time= 14.60, max_n_iterations= 2548.00
-i=90, norm(beta_hat - beta)= 0.37, rho= 0.65, iteration_time= 8.48, max_n_iterations= 785.00
-i=100, norm(beta_hat - beta)= 0.42, rho= 0.70, iteration_time= 11.90, max_n_iterations= 1548.00
-CPU times: user 4min 22s, sys: 1min 9s, total: 5min 32s
-Wall time: 1min 18s
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>i=0, norm(beta_hat - beta)= 3.85, rho= 0.14, iteration_time= 0.08, max_n_iterations= 35.00
+i=10, norm(beta_hat - beta)= 2.05, rho= 0.22, iteration_time= 0.72, max_n_iterations= 82.00
+i=20, norm(beta_hat - beta)= 1.44, rho= 0.26, iteration_time= 2.74, max_n_iterations= 90.00
+i=30, norm(beta_hat - beta)= 1.14, rho= 0.35, iteration_time= 5.00, max_n_iterations= 268.00
+i=40, norm(beta_hat - beta)= 0.91, rho= 0.39, iteration_time= 4.73, max_n_iterations= 296.00
+i=50, norm(beta_hat - beta)= 0.71, rho= 0.46, iteration_time= 11.03, max_n_iterations= 744.00
+i=60, norm(beta_hat - beta)= 0.56, rho= 0.53, iteration_time= 10.88, max_n_iterations= 500.00
+i=70, norm(beta_hat - beta)= 0.45, rho= 0.57, iteration_time= 7.64, max_n_iterations= 400.00
+i=80, norm(beta_hat - beta)= 0.37, rho= 0.61, iteration_time= 14.29, max_n_iterations= 2548.00
+i=90, norm(beta_hat - beta)= 0.37, rho= 0.65, iteration_time= 8.45, max_n_iterations= 785.00
+i=100, norm(beta_hat - beta)= 0.42, rho= 0.70, iteration_time= 11.63, max_n_iterations= 1548.00
+CPU times: user 4min 36s, sys: 1min 14s, total: 5min 51s
+Wall time: 1min 17s
 </pre></div>
 </div>
 </div>
@@ -1634,12 +1618,12 @@ In the E-M case, the neural net would have to learn from data that keeps being s
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../intro.html"
+       href="8_adversarial_domain_adaptation.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">The AV blog</p>
+        <p class="prev-next-title">Adversarial domain adaptation</p>
       </div>
     </a>
     <a class="right-next"

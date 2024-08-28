@@ -1,0 +1,2789 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Adversarial domain adaptation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'chapters/8_adversarial_domain_adaptation';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="JAX Recipe III: Multi-class predictions with correlation (Multivariate Probit)" href="7h_multivariate_probit_regression.html" />
+    <link rel="prev" title="The AV blog" href="../intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    The AV blog
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Adversarial domain adaptation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7h_multivariate_probit_regression.html">JAX Recipe III: Multi-class predictions with correlation (Multivariate Probit)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_optimization_patterns.html">JAX Recipe II: Optimization patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1_linear_regression.html">JAX Recipe I: Hello, World! (Linear regression)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="0_references.html">References</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/aevive/blog/blob/main/chapters/8_adversarial_domain_adaptation.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/aevive/blog" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/aevive/blog/issues/new?title=Issue%20on%20page%20%2Fchapters/8_adversarial_domain_adaptation.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/chapters/8_adversarial_domain_adaptation.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Adversarial domain adaptation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-mnist-classifier">Simple MNIST Classifier</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-deployment-on-usps-data">First deployment on USPS data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-the-embedding-using-tsne">Visualize the embedding using TSNE</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adapting-the-model-to-usps">Adapting the model to USPS</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training">Training</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis">Analysis</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="adversarial-domain-adaptation">
+<h1>Adversarial domain adaptation<a class="headerlink" href="#adversarial-domain-adaptation" title="Link to this heading">#</a></h1>
+<p>Have you ever deployed a model on data it has never seen? Yes, of course you have.</p>
+<p>A new geography to explore, different demographics, a new client, upgraded hardware, all those lead to deployment data that is different than training.
+However, getting new labeled data is always expensive. Do we have ways to adapt a model using only unlabeled data?</p>
+<p>In this article, we explore how ADDA (Adversarial Discriminative Domain Adaptation, Tzeng et al., 2017) <span id="id1">[<a class="reference internal" href="0_references.html#id16" title="Eric Tzeng, Judy Hoffman, Kate Saenko, and Trevor Darrell. Adversarial discriminative domain adaptation. In 2017 IEEE Conference on Computer Vision and Pattern Recognition (CVPR), volume, 2962-2971. 2017. doi:10.1109/CVPR.2017.316.">THSD17</a>]</span> is a simple tool to adapt a model to new unlabeled data.</p>
+<p>We will cover:</p>
+<ul class="simple">
+<li><p>Training of a simple MNIST classifier</p></li>
+<li><p>Inspection of data shift between MNIST and the USPS dataset</p></li>
+<li><p>Adaptation the classifier to the USPS dataset and reduce error from 21% to 9% without using any USPS labels.</p></li>
+</ul>
+<p>First, a few imports:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="kn">import</span> <span class="n">TSNE</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">torchvision</span> <span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">transforms</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="simple-mnist-classifier">
+<h2>Simple MNIST Classifier<a class="headerlink" href="#simple-mnist-classifier" title="Link to this heading">#</a></h2>
+<p>In this section, we quickly go over a simple training procedure to get a baseline MNIST classifier.
+The classifier will be split into an encoder which projects image to a 256-dimensional embedding, and a head (included in Net) which will classify this embedding into the 10 classes of the MNIST dataset.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Encoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">),</span>  <span class="c1"># (B, 32, 28, 28)</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">),</span>  <span class="c1"># (B, 48, 24, 24)</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>  <span class="c1"># (B, 48, 12, 12)</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>  <span class="c1"># (B, 48, 12, 12)</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">6912</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Net</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">Encoder</span><span class="p">()</span> <span class="k">if</span> <span class="n">encoder</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">encoder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">84</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">84</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">loss</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>To prepare for later, we will also train a decoder, that maps the embedding back to image space. This is not mandatory, and is only useful for validation and illustration purposes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Reshape</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Reshape</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">args</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Decoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">48</span> <span class="o">*</span> <span class="mi">12</span> <span class="o">*</span> <span class="mi">12</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">Reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Upsample</span><span class="p">(</span><span class="n">scale_factor</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">),</span>  <span class="c1"># (B, 32, 24, 24)</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Upsample</span><span class="p">(</span><span class="n">scale_factor</span><span class="o">=</span><span class="mi">28</span> <span class="o">/</span> <span class="mi">24</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">),</span>  <span class="c1"># (B, 32, 28, 28)</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">),</span>  <span class="c1"># (B, 1, 28, 28)</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">AutoEncoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder</span><span class="p">,</span> <span class="n">decoder</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">encoder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">decoder</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
+        <span class="n">encoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">output</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">loss</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here are the main training procedures that are fairly standard for pytorch. We define an entropy metric which will be useful later. Note that entropy here means the entropy of the predictive distribution, and measures how flat or how peaked the predictive distribution is. It does not use the labels.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">log_interval</span><span class="p">):</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">train_loss</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_loader</span><span class="p">):</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">target</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+        <span class="n">train_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Train Loss: </span><span class="si">{</span><span class="n">train_loss</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">train_loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">test_loader</span><span class="p">):</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">test_loss</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">correct</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">data</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">test_loader</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">target</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">)</span>
+            <span class="n">test_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">correct</span> <span class="o">+=</span> <span class="n">pred</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">view_as</span><span class="p">(</span><span class="n">pred</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+    <span class="n">test_loss</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">correct</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Test Loss: </span><span class="si">{</span><span class="n">test_loss</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">, Accuracy: </span><span class="si">{</span><span class="n">correct</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="mf">100.</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">correct</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">%)&quot;</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">test_loss</span><span class="p">,</span> <span class="n">accuracy</span>
+
+
+<span class="k">def</span> <span class="nf">compute_entropy</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">test_loader</span><span class="p">):</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">entropy_total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">data</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">test_loader</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">target</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">ls_output</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">s_output</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">entropy_total</span> <span class="o">+=</span> <span class="p">(</span><span class="n">s_output</span> <span class="o">*</span> <span class="n">ls_output</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+    <span class="n">entropy_total</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">entropy_total</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">2024</span><span class="p">)</span>
+
+<span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Device: </span><span class="si">{</span><span class="n">device</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+<span class="c1"># Already normalized between 0 and 1</span>
+<span class="n">dataset1</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="s2">&quot;../data&quot;</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+<span class="n">dataset2</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="s2">&quot;../data&quot;</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+
+<span class="n">train_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">}</span>
+<span class="n">test_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">}</span>
+
+<span class="n">cuda_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;num_workers&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;pin_memory&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;shuffle&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;drop_last&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+<span class="n">train_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cuda_kwargs</span><span class="p">)</span>
+<span class="n">test_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cuda_kwargs</span><span class="p">)</span>
+
+
+<span class="n">train_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset1</span><span class="p">,</span> <span class="o">**</span><span class="n">train_kwargs</span><span class="p">)</span>
+<span class="n">test_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset2</span><span class="p">,</span> <span class="o">**</span><span class="n">test_kwargs</span><span class="p">)</span>
+
+<span class="n">source_encoder</span> <span class="o">=</span> <span class="n">Encoder</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Net</span><span class="p">(</span><span class="n">encoder</span><span class="o">=</span><span class="n">source_encoder</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">3e-4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Device: cuda
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">log_interval</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+    <span class="n">test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">test_loader</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch: 1
+Train Loss: 0.244382
+Test Loss: 0.063797, Accuracy: 9814/10000 (98%)
+Epoch: 2
+Train Loss: 0.058103
+Test Loss: 0.037827, Accuracy: 9875/10000 (99%)
+Epoch: 3
+Train Loss: 0.037859
+Test Loss: 0.032907, Accuracy: 9890/10000 (99%)
+Epoch: 4
+Train Loss: 0.028662
+Test Loss: 0.028936, Accuracy: 9907/10000 (99%)
+Epoch: 5
+Train Loss: 0.021397
+Test Loss: 0.035105, Accuracy: 9889/10000 (99%)
+Epoch: 6
+Train Loss: 0.018342
+Test Loss: 0.029899, Accuracy: 9911/10000 (99%)
+Epoch: 7
+Train Loss: 0.012864
+Test Loss: 0.027778, Accuracy: 9917/10000 (99%)
+Epoch: 8
+Train Loss: 0.011405
+Test Loss: 0.030385, Accuracy: 9916/10000 (99%)
+Epoch: 9
+Train Loss: 0.008913
+Test Loss: 0.032024, Accuracy: 9915/10000 (99%)
+</pre></div>
+</div>
+</div>
+</div>
+<p>To help visualize the adaptation process, we will train a decoder based to map the embedding back to image space.</p>
+<p>Note that the embedding is fixed here, and has been trained to maximize predictive performance. We would therefore expect the decoder to recreate stereotypical or reference digits that don’t necessarily match the input exactly. From an informational perspective, there is no reason to think that the embedding contains much more than class information, since that’s what it’s been optimized to extract.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># To help visualization, let&#39;s train a decoder</span>
+<span class="n">decoder</span> <span class="o">=</span> <span class="n">Decoder</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span><span class="n">decoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">3e-4</span><span class="p">)</span>
+
+<span class="n">autoencoder</span> <span class="o">=</span> <span class="n">AutoEncoder</span><span class="p">(</span><span class="n">source_encoder</span><span class="p">,</span> <span class="n">decoder</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_autoencoder</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">test_loader</span><span class="p">):</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">test_loss</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">data</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">test_loader</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">),</span> <span class="n">target</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;sum&quot;</span><span class="p">)</span>
+            <span class="n">test_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="mi">28</span> <span class="o">*</span> <span class="mi">28</span><span class="p">)</span>
+
+    <span class="n">test_loss</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test loss: </span><span class="si">{</span><span class="n">test_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">40</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">train</span><span class="p">(</span><span class="n">autoencoder</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">log_interval</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+    <span class="n">test_autoencoder</span><span class="p">(</span><span class="n">autoencoder</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">test_loader</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch: 1
+Train Loss: 0.021263
+Test loss: 0.0107
+Epoch: 2
+Train Loss: 0.009271
+Test loss: 0.0080
+Epoch: 3
+Train Loss: 0.007462
+Test loss: 0.0068
+Epoch: 4
+Train Loss: 0.006555
+Test loss: 0.0061
+Epoch: 5
+Train Loss: 0.005961
+Test loss: 0.0057
+Epoch: 6
+Train Loss: 0.005543
+Test loss: 0.0054
+Epoch: 7
+Train Loss: 0.005221
+Test loss: 0.0051
+Epoch: 8
+Train Loss: 0.004983
+Test loss: 0.0049
+Epoch: 9
+Train Loss: 0.004760
+Test loss: 0.0047
+Epoch: 10
+Train Loss: 0.004587
+Test loss: 0.0047
+Epoch: 11
+Train Loss: 0.004439
+Test loss: 0.0046
+Epoch: 12
+Train Loss: 0.004330
+Test loss: 0.0044
+Epoch: 13
+Train Loss: 0.004227
+Test loss: 0.0043
+Epoch: 14
+Train Loss: 0.004133
+Test loss: 0.0042
+Epoch: 15
+Train Loss: 0.004040
+Test loss: 0.0041
+Epoch: 16
+Train Loss: 0.003971
+Test loss: 0.0041
+Epoch: 17
+Train Loss: 0.003904
+Test loss: 0.0041
+Epoch: 18
+Train Loss: 0.003830
+Test loss: 0.0041
+Epoch: 19
+Train Loss: 0.003783
+Test loss: 0.0040
+Epoch: 20
+Train Loss: 0.003733
+Test loss: 0.0039
+Epoch: 21
+Train Loss: 0.003680
+Test loss: 0.0038
+Epoch: 22
+Train Loss: 0.003639
+Test loss: 0.0038
+Epoch: 23
+Train Loss: 0.003599
+Test loss: 0.0038
+Epoch: 24
+Train Loss: 0.003558
+Test loss: 0.0037
+Epoch: 25
+Train Loss: 0.003514
+Test loss: 0.0038
+Epoch: 26
+Train Loss: 0.003469
+Test loss: 0.0037
+Epoch: 27
+Train Loss: 0.003442
+Test loss: 0.0036
+Epoch: 28
+Train Loss: 0.003417
+Test loss: 0.0037
+Epoch: 29
+Train Loss: 0.003386
+Test loss: 0.0036
+Epoch: 30
+Train Loss: 0.003356
+Test loss: 0.0036
+Epoch: 31
+Train Loss: 0.003341
+Test loss: 0.0035
+Epoch: 32
+Train Loss: 0.003295
+Test loss: 0.0037
+Epoch: 33
+Train Loss: 0.003284
+Test loss: 0.0035
+Epoch: 34
+Train Loss: 0.003262
+Test loss: 0.0035
+Epoch: 35
+Train Loss: 0.003230
+Test loss: 0.0035
+Epoch: 36
+Train Loss: 0.003219
+Test loss: 0.0036
+Epoch: 37
+Train Loss: 0.003198
+Test loss: 0.0035
+Epoch: 38
+Train Loss: 0.003173
+Test loss: 0.0035
+Epoch: 39
+Train Loss: 0.003157
+Test loss: 0.0034
+Epoch: 40
+Train Loss: 0.003148
+Test loss: 0.0034
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>With the decoder now trained, we can visualize predictions and reconstructions in the following plot.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Viz reconstructions</span>
+<span class="c1"># note that the embedding is specialized for classification, we would not expect the reconstructions to exactly match the input, but rather a canonical version of the class the input represents.</span>
+
+
+<span class="k">def</span> <span class="nf">to_rgb</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">viz_dataset</span><span class="p">(</span><span class="n">autoencoder</span><span class="p">,</span> <span class="n">loader</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
+        <span class="n">x_hat</span> <span class="o">=</span> <span class="n">autoencoder</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+        <span class="n">y_hat</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># , sharex=True, sharey=True</span>
+
+        <span class="n">fig</span><span class="o">.</span><span class="n">set_figheight</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">set_figwidth</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">to_rgb</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input (label = </span><span class="si">{</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">to_rgb</span><span class="p">(</span><span class="n">x_hat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reconstruction (prediction = </span><span class="si">{</span><span class="n">y_hat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">y_hat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Prediction Prob.&quot;</span><span class="p">)</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">break</span>
+
+<span class="n">viz_dataset</span><span class="p">(</span><span class="n">autoencoder</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/f9cee694b5c27b6e91f321893799ba7ea0f67ad12faae44d5d4436c4662cfcac.png" src="../_images/f9cee694b5c27b6e91f321893799ba7ea0f67ad12faae44d5d4436c4662cfcac.png" />
+</div>
+</div>
+<p>Model outputs for different sample images.</p>
+<p>Left column: input data and label</p>
+<p>Middle:  Reconstruction from the decoded embedding.</p>
+<p>Right: predictive distribution.</p>
+<p>A few findings:</p>
+<ol class="arabic simple">
+<li><p>The reconstructions are near perfect. This is surprising because this means the embedding still carries spatial information that is not necessarily relevant for classification.</p></li>
+<li><p>The model is very confident in its predictions: the predictive distribution has all its mass on its mode.</p></li>
+</ol>
+</section>
+<section id="first-deployment-on-usps-data">
+<h2>First deployment on USPS data<a class="headerlink" href="#first-deployment-on-usps-data" title="Link to this heading">#</a></h2>
+<p>Let’s start by comparing the USPS data with MNIST simply by looking at examples.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset1</span><span class="p">,</span> <span class="o">**</span><span class="n">train_kwargs</span><span class="p">)</span>
+<span class="n">test_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset2</span><span class="p">,</span> <span class="o">**</span><span class="n">test_kwargs</span><span class="p">)</span>
+
+<span class="n">source_train</span> <span class="o">=</span> <span class="n">train_loader</span>
+<span class="n">source_test</span> <span class="o">=</span> <span class="n">test_loader</span>
+
+<span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+        <span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">(</span><span class="mi">28</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">usps_train</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">USPS</span><span class="p">(</span><span class="s2">&quot;../data&quot;</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+<span class="n">usps_test</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">USPS</span><span class="p">(</span><span class="s2">&quot;../data&quot;</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+
+<span class="n">target_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">usps_train</span><span class="p">,</span> <span class="o">**</span><span class="n">train_kwargs</span><span class="p">)</span>
+<span class="n">target_test</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">usps_test</span><span class="p">,</span> <span class="o">**</span><span class="n">test_kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># let&#39;s plot a few examples of each:</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+<span class="n">fig</span><span class="o">.</span><span class="n">set_figheight</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">set_figwidth</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">train_loader</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">k</span> <span class="o">%</span> <span class="n">n</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">k</span> <span class="o">//</span> <span class="n">n</span>
+        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">to_rgb</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+    <span class="k">break</span>
+
+<span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">target_train</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="o">**</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">k</span> <span class="o">%</span> <span class="n">n</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="n">k</span> <span class="o">//</span> <span class="n">n</span>
+        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">to_rgb</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+        <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+    <span class="k">break</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/403ade2c91bf54dbfdb29d85ccefc144e8c35f987d325b69ce70114fc9ea0187.png" src="../_images/403ade2c91bf54dbfdb29d85ccefc144e8c35f987d325b69ce70114fc9ea0187.png" />
+</div>
+</div>
+<p>On the first half, MNIST digits, on the second half, USPS digits. They are fairly easy to tell apart: USPS digits are blurrier and take up more of the available space, while MNIST is sharper (i.e. pixel intensities are closer to 0 and 1), and leave a bit of room around each digit.
+While we could fix those things by manually finding the right image transformation to align them, the goal of this article is to cover cases where the shift is subtle and potentially impossible to visualize.</p>
+<p>Let’s test how our base classifier is faring on USPS.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">target_train</span><span class="p">)</span>
+<span class="n">viz_dataset</span><span class="p">(</span><span class="n">autoencoder</span><span class="p">,</span> <span class="n">target_train</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Test Loss: 0.889081, Accuracy: 5962/7291 (82%)
+</pre></div>
+</div>
+<img alt="../_images/312c1f0464266b8a9063b587e3058e3c1817d5cb8e128deb63f00ec76266490d.png" src="../_images/312c1f0464266b8a9063b587e3058e3c1817d5cb8e128deb63f00ec76266490d.png" />
+</div>
+</div>
+<p>Accuracy is around 80% (down from 99% for MNIST). Reconstructions are poor with thin lines.
+Predictions are not confident, which I would say is a positive, the model is somewhat honest to the fact that it does not recognize this data really well.</p>
+<section id="visualize-the-embedding-using-tsne">
+<h3>Visualize the embedding using TSNE<a class="headerlink" href="#visualize-the-embedding-using-tsne" title="Link to this heading">#</a></h3>
+<p>Another tool to visualize embeddings directly (rather than through their reconstruction) is via dimensionality reduction like TSNE.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use TSNE to visualize</span>
+
+<span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">loader</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10_000</span><span class="p">):</span>
+    <span class="n">x_batches</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">y_batches</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">n_current</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
+        <span class="n">x_batch</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">y_batch</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n</span> <span class="o">-</span> <span class="n">n_current</span><span class="p">)</span>
+
+        <span class="n">x_batches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_batch</span><span class="p">[:</span><span class="n">k</span><span class="p">])</span>
+        <span class="n">y_batches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y_batch</span><span class="p">[:</span><span class="n">k</span><span class="p">])</span>
+
+        <span class="n">n_current</span> <span class="o">+=</span> <span class="n">k</span>
+
+        <span class="k">if</span> <span class="n">n_current</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">x_batches</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">y_batches</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+
+
+<span class="n">n_tsne</span> <span class="o">=</span> <span class="mi">7000</span>
+
+<span class="n">x_source</span><span class="p">,</span> <span class="n">y_source</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">encoder</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_tsne</span><span class="p">)</span>
+<span class="n">x_target</span><span class="p">,</span> <span class="n">y_target</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">encoder</span><span class="p">,</span> <span class="n">target_train</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_tsne</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x_source</span><span class="p">,</span> <span class="n">x_target</span><span class="p">])</span>
+<span class="n">tsne</span> <span class="o">=</span> <span class="n">TSNE</span><span class="p">()</span>
+<span class="n">x_2d</span> <span class="o">=</span> <span class="n">tsne</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">x_2d_source</span> <span class="o">=</span> <span class="n">x_2d</span><span class="p">[:</span><span class="n">n_tsne</span><span class="p">]</span>
+<span class="n">x_2d_target</span> <span class="o">=</span> <span class="n">x_2d</span><span class="p">[</span><span class="n">n_tsne</span><span class="p">:]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">y_source</span><span class="p">,</span> <span class="n">y_target</span><span class="p">])</span>
+
+<span class="n">df_plot</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;x0&quot;</span><span class="p">:</span> <span class="n">x_2d</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="n">x_2d</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">y</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;str&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="n">n_tsne</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">n_tsne</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df_plot</span><span class="p">,</span>  <span class="c1"># .sample(frac=0.1),</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;x0&quot;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span>
+    <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
+    <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
+    <span class="n">hue_order</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)],</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="p">(</span><span class="mf">1.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/1ac4133db7d3cdcb466bddb2c3d1f7c75db1d5f0ad0a9f56af8aefaefe6c2880.png" src="../_images/1ac4133db7d3cdcb466bddb2c3d1f7c75db1d5f0ad0a9f56af8aefaefe6c2880.png" />
+</div>
+</div>
+<p>Using TSNE, we can peek at a two dimensional representation of the 256-dimensional embedded data. Note that TSNE is unaware of both class and dataset of origin during the fit.
+However it is able to partition data points into coherent clusters: each cluster has a clear majority class (color), and each cluster comes very predominantly from a single dataset (marker).</p>
+<p>This first observation implies that it should not be too hard to finetune the head to classify USPS (i.e. the target) with little data and get good results. I may add this in the future, but I want to keep the constraints of not using any labeled data for training.</p>
+<p>We can also see that eventhough the data cluster nicely, the clustering is cleaner for MNIST than USPS. For example, 4’s and 9’s are further apart in MNIST than for USPS, where they seem to intersect.</p>
+<p>Finally, we also observe that USPS data is on average closer to the origin than MNIST, which tends to be more on the border. This is another sign of the representation being more seperable for MNIST than USPS.</p>
+<p>Note that there are certain limits to collapsing a high-dimensional space into 2 dimensions, and certain distances cannot be kept the same, but I do think that the points I have made are not affected by this projection.</p>
+<p>Let’s look at the confusion matrix and per class accuracy to understand where the model is failing.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pred_source</span><span class="p">,</span> <span class="n">y_source</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_tsne</span><span class="p">)</span>
+<span class="n">pred_target</span><span class="p">,</span> <span class="n">y_target</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">target_train</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_tsne</span><span class="p">)</span>
+
+<span class="n">y_pred_source</span> <span class="o">=</span> <span class="n">pred_source</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y_pred_target</span> <span class="o">=</span> <span class="n">pred_target</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">source_cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_source</span><span class="p">,</span> <span class="n">y_pred_source</span><span class="p">)</span>
+<span class="n">source_acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">source_cm</span><span class="p">)</span> <span class="o">/</span> <span class="n">source_cm</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Source: MNIST&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">source_cm</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">source_acc</span><span class="p">)</span>
+
+<span class="n">target_cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_target</span><span class="p">,</span> <span class="n">y_pred_target</span><span class="p">)</span>
+<span class="n">target_acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">target_cm</span><span class="p">)</span> <span class="o">/</span> <span class="n">target_cm</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Target: USPS&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">target_cm</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">target_acc</span><span class="p">)</span>
+
+<span class="n">test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">target_train</span><span class="p">)</span>
+<span class="n">test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">target_test</span><span class="p">)</span>
+<span class="kc">None</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Source: MNIST
+[[698   0   0   0   0   0   1   0   0   0]
+ [  0 800   0   0   0   0   0   3   0   0]
+ [  0   0 700   0   0   0   0   1   0   0]
+ [  0   0   1 684   0   0   0   0   0   0]
+ [  0   0   0   0 678   0   0   0   0   1]
+ [  0   0   0   1   0 589   1   0   0   0]
+ [  0   0   0   0   1   0 688   0   0   0]
+ [  0   0   0   0   0   0   0 775   0   0]
+ [  0   1   1   1   0   0   1   0 667   0]
+ [  0   0   0   1   0   0   0   1   0 705]]
+[0.99856938 0.99626401 0.99857347 0.99854015 0.99852725 0.99661591
+ 0.99854862 1.         0.99403875 0.99717115]
+Target: USPS
+[[999   2   7 106   0  12  16   0   0   0]
+ [  0 926   1   2   0   0  36   0   0   0]
+ [  0   3 665  26   1   0   5   2   0   0]
+ [  0   0   7 624   0   5   0   1   0   0]
+ [  2  15   4   0 520   1  20  57   1   1]
+ [  2   0   4  43   0 470   5   5   0   0]
+ [ 10   3   1   5   0  11 610   0   0   0]
+ [  1  59  37   0   1   0   2 524   0   0]
+ [  2  11  13  13   7   3  50   8 412   1]
+ [  0  15   1   3 271   1  12 301  14   2]]
+[0.87478109 0.95958549 0.94729345 0.97959184 0.8373591  0.88846881
+ 0.953125   0.83974359 0.79230769 0.00322581]
+Test Loss: 0.894043, Accuracy: 5951/7291 (82%)
+Test Loss: 1.000562, Accuracy: 1571/2007 (78%)
+</pre></div>
+</div>
+</div>
+</div>
+<p>While MNIST is classified at 99% accuracy across all classes, 9’s for USPS are completely missed, and other classes have varying levels of accuracy. The overall rate for USPS remains around 79%.</p>
+</section>
+</section>
+<section id="adapting-the-model-to-usps">
+<h2>Adapting the model to USPS<a class="headerlink" href="#adapting-the-model-to-usps" title="Link to this heading">#</a></h2>
+<p>Let’s adapt the model to USPS using ADDA.
+The idea is simple: we are going to fine-tune the encoder to produce embeddings that are undistinguishable from the embeddings produced by MNIST.</p>
+<p>To do so, we are going to:</p>
+<ul class="simple">
+<li><p>instanciate a new encoder that has the same weight as the MNIST encoder to begin with.</p></li>
+<li><p>train that encoder in an adversarial fashion to enforce that the distribution of embeddings between the two dataset becomes the same.</p></li>
+<li><p>in order to have an adversarial training, we need to train a discriminator that will try to distinguish between the two datasets.</p></li>
+</ul>
+<p>Note that here, the encoder is the equivalent of the “generator” part of a GAN (generative adversarial network). However, since it is producing a lower-dimensional vector (256), compared to producing a full image (28 * 28 = 784), this is much more efficient than to compute a completely new image.</p>
+<p>For simplicity, the discriminator will have a similar architecture to the head of the classifier.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Discriminator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">500</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seq</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">target_encoder</span> <span class="o">=</span> <span class="n">Encoder</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="c1"># The target encoder is initialized with the weights of the source encoder.</span>
+<span class="n">target_encoder</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">source_encoder</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
+
+<span class="n">discriminator</span> <span class="o">=</span> <span class="n">Discriminator</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+<span class="n">target_model</span> <span class="o">=</span> <span class="n">Net</span><span class="p">(</span><span class="n">target_encoder</span><span class="p">)</span>
+<span class="n">target_model</span><span class="o">.</span><span class="n">seq</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">seq</span>
+<span class="n">target_model</span> <span class="o">=</span> <span class="n">target_model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># we check that the models give similar results at the beginning</span>
+<span class="n">test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">target_test</span><span class="p">)</span>
+<span class="n">test</span><span class="p">(</span><span class="n">target_model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">target_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Test Loss: 1.001423, Accuracy: 1570/2007 (78%)
+Test Loss: 1.000888, Accuracy: 1571/2007 (78%)
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(1.000887761973717, 0.7827603388141505)
+</pre></div>
+</div>
+</div>
+</div>
+<section id="training">
+<h3>Training<a class="headerlink" href="#training" title="Link to this heading">#</a></h3>
+<p>The following is a typical training loop for adversarial training. Here are the main steps:</p>
+<ol class="arabic simple">
+<li><p>grab a batch of source data and target data</p></li>
+<li><p>run them through their respective encoders</p></li>
+<li><p>classify each sample into source (0’s) or target (1’s) and compute a cross-entropy loss</p></li>
+<li><p>Backpropagate through only the discriminator so it gets better.</p></li>
+<li><p>Now that the discriminator has changed, run the target batch through it again</p></li>
+<li><p>This time we want to improve the generator, so we use a cross-entropy loss with source (0’s) labels</p></li>
+<li><p>Backpropagate through the generator only, so that it gets better at generating more source-like embeddings.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">d_optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span><span class="n">discriminator</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">3e-5</span><span class="p">)</span>
+<span class="n">te_optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span><span class="n">target_encoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">3e-5</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
+    <span class="n">discriminator</span><span class="p">,</span>
+    <span class="n">source_encoder</span><span class="p">,</span>
+    <span class="n">target_encoder</span><span class="p">,</span>
+    <span class="n">device</span><span class="p">,</span>
+    <span class="n">target_train</span><span class="p">,</span>
+    <span class="n">source_train</span><span class="p">,</span>
+    <span class="n">d_optimizer</span><span class="p">,</span>
+    <span class="n">te_optimizer</span><span class="p">,</span>
+    <span class="n">epoch</span><span class="p">,</span>
+    <span class="n">log_interval</span><span class="p">,</span>
+<span class="p">):</span>
+
+    <span class="n">discriminator</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">target_encoder</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">source_encoder</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+    <span class="n">d_loss_total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">d_total</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">g_loss_total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">g_total</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">source_batch</span><span class="p">,</span> <span class="n">target_batch</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span><span class="n">source_train</span><span class="p">,</span> <span class="n">target_train</span><span class="p">)</span>
+    <span class="p">):</span>
+
+        <span class="n">source_x</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">source_batch</span>
+        <span class="n">source_x</span> <span class="o">=</span> <span class="n">source_x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="n">target_x</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">target_batch</span>
+        <span class="n">target_x</span> <span class="o">=</span> <span class="n">target_x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># Update discriminator</span>
+        <span class="n">d_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+        <span class="n">out_source</span> <span class="o">=</span> <span class="n">discriminator</span><span class="p">(</span><span class="n">source_encoder</span><span class="p">(</span><span class="n">source_x</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+        <span class="n">out_target</span> <span class="o">=</span> <span class="n">discriminator</span><span class="p">(</span><span class="n">target_encoder</span><span class="p">(</span><span class="n">target_x</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+
+        <span class="n">loss_source</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span>
+            <span class="n">out_source</span><span class="p">,</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">train_kwargs</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">loss_target</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span>
+            <span class="n">out_target</span><span class="p">,</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">train_kwargs</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">d_loss</span> <span class="o">=</span> <span class="n">loss_source</span> <span class="o">+</span> <span class="n">loss_target</span>
+        <span class="n">d_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">d_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">source_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">target_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">d_loss_total</span> <span class="o">+=</span> <span class="n">batch_size</span> <span class="o">*</span> <span class="n">d_loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">d_total</span> <span class="o">+=</span> <span class="n">batch_size</span>
+
+        <span class="c1"># Update Target encoder</span>
+        <span class="n">te_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">out_target</span> <span class="o">=</span> <span class="n">discriminator</span><span class="p">(</span><span class="n">target_encoder</span><span class="p">(</span><span class="n">target_x</span><span class="p">))</span>
+        <span class="c1"># here we want the encoder to produce more source-like embeddings</span>
+        <span class="n">te_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span>
+            <span class="n">out_target</span><span class="p">,</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">train_kwargs</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">te_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">te_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">target_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">g_loss_total</span> <span class="o">+=</span> <span class="n">batch_size</span> <span class="o">*</span> <span class="n">te_loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">g_total</span> <span class="o">+=</span> <span class="n">batch_size</span>
+
+    <span class="n">d_loss</span> <span class="o">=</span> <span class="n">d_loss_total</span> <span class="o">/</span> <span class="n">d_total</span>
+    <span class="n">g_loss</span> <span class="o">=</span> <span class="n">g_loss_total</span> <span class="o">/</span> <span class="n">g_total</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Train Epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2"> </span><span class="se">\t</span><span class="s2"> DLoss: </span><span class="si">{</span><span class="n">d_loss</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2"> TELoss: </span><span class="si">{</span><span class="n">g_loss</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">d_loss</span><span class="p">,</span> <span class="n">g_loss</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here is a training procedure that works decently well for this data:</p>
+<ol class="arabic simple">
+<li><p>warmup with a small learning rate to get the network in a more stable place.</p></li>
+<li><p>increase the learning rate.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># we&#39;ll track the following metrics</span>
+<span class="n">hist</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;d_loss&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s2">&quot;g_loss&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s2">&quot;test_loss&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s2">&quot;test_accuracy&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s2">&quot;test_entropy&quot;</span><span class="p">:</span> <span class="p">[],</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">30</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">d_loss</span><span class="p">,</span> <span class="n">g_loss</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span>
+        <span class="n">discriminator</span><span class="p">,</span>
+        <span class="n">source_encoder</span><span class="p">,</span>
+        <span class="n">target_encoder</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">,</span>
+        <span class="n">target_train</span><span class="p">,</span>
+        <span class="n">source_train</span><span class="p">,</span>
+        <span class="n">d_optimizer</span><span class="p">,</span>
+        <span class="n">te_optimizer</span><span class="p">,</span>
+        <span class="n">epoch</span><span class="p">,</span>
+        <span class="n">log_interval</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;d_loss&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d_loss</span><span class="p">)</span>
+    <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;g_loss&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g_loss</span><span class="p">)</span>
+    <span class="n">test_loss</span><span class="p">,</span> <span class="n">test_accuracy</span> <span class="o">=</span> <span class="n">test</span><span class="p">(</span><span class="n">target_model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">target_test</span><span class="p">)</span>
+
+    <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;test_loss&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_loss</span><span class="p">)</span>
+    <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;test_accuracy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_accuracy</span><span class="p">)</span>
+    <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;test_entropy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compute_entropy</span><span class="p">(</span><span class="n">target_model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">target_train</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test entropy: </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;test_entropy&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2"> .6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Train Epoch: 1 	 DLoss: 1.100269 TELoss: 0.681231
+Test Loss: 0.687393, Accuracy: 1626/2007 (81%)
+Test entropy:  0.235374
+Train Epoch: 2 	 DLoss: 0.981219 TELoss: 0.782155
+Test Loss: 0.805942, Accuracy: 1563/2007 (78%)
+Test entropy:  0.406942
+Train Epoch: 3 	 DLoss: 0.848668 TELoss: 0.825000
+Test Loss: 0.749277, Accuracy: 1573/2007 (78%)
+Test entropy:  0.602024
+Train Epoch: 4 	 DLoss: 0.800949 TELoss: 0.916059
+Test Loss: 0.917364, Accuracy: 1483/2007 (74%)
+Test entropy:  0.793002
+Train Epoch: 5 	 DLoss: 0.700257 TELoss: 0.976722
+Test Loss: 0.572987, Accuracy: 1653/2007 (82%)
+Test entropy:  0.578317
+Train Epoch: 6 	 DLoss: 0.762881 TELoss: 1.027083
+Test Loss: 0.700377, Accuracy: 1605/2007 (80%)
+Test entropy:  0.744050
+Train Epoch: 7 	 DLoss: 0.695208 TELoss: 0.984430
+Test Loss: 0.676700, Accuracy: 1587/2007 (79%)
+Test entropy:  0.653053
+Train Epoch: 8 	 DLoss: 0.688933 TELoss: 1.094555
+Test Loss: 0.448379, Accuracy: 1713/2007 (85%)
+Test entropy:  0.399793
+Train Epoch: 9 	 DLoss: 0.750267 TELoss: 1.106000
+Test Loss: 0.458253, Accuracy: 1714/2007 (85%)
+Test entropy:  0.283082
+Train Epoch: 10 	 DLoss: 0.662957 TELoss: 1.296716
+Test Loss: 0.552563, Accuracy: 1680/2007 (84%)
+Test entropy:  0.424869
+Train Epoch: 11 	 DLoss: 0.702431 TELoss: 1.286616
+Test Loss: 0.506143, Accuracy: 1693/2007 (84%)
+Test entropy:  0.240596
+Train Epoch: 12 	 DLoss: 0.698709 TELoss: 1.359531
+Test Loss: 0.458033, Accuracy: 1743/2007 (87%)
+Test entropy:  0.161446
+Train Epoch: 13 	 DLoss: 0.745351 TELoss: 1.397677
+Test Loss: 0.573368, Accuracy: 1702/2007 (85%)
+Test entropy:  0.211534
+Train Epoch: 14 	 DLoss: 0.756598 TELoss: 1.331315
+Test Loss: 0.530940, Accuracy: 1708/2007 (85%)
+Test entropy:  0.173249
+Train Epoch: 15 	 DLoss: 0.676510 TELoss: 1.502442
+Test Loss: 0.532982, Accuracy: 1712/2007 (85%)
+Test entropy:  0.150983
+Train Epoch: 16 	 DLoss: 0.773020 TELoss: 1.393740
+Test Loss: 0.600083, Accuracy: 1708/2007 (85%)
+Test entropy:  0.146742
+Train Epoch: 17 	 DLoss: 0.727968 TELoss: 1.487230
+Test Loss: 0.528443, Accuracy: 1728/2007 (86%)
+Test entropy:  0.131206
+Train Epoch: 18 	 DLoss: 0.767483 TELoss: 1.354593
+Test Loss: 0.503384, Accuracy: 1757/2007 (88%)
+Test entropy:  0.110887
+Train Epoch: 19 	 DLoss: 0.715770 TELoss: 1.464245
+Test Loss: 0.611475, Accuracy: 1736/2007 (86%)
+Test entropy:  0.108158
+Train Epoch: 20 	 DLoss: 0.765578 TELoss: 1.455018
+Test Loss: 0.606297, Accuracy: 1753/2007 (87%)
+Test entropy:  0.091307
+Train Epoch: 21 	 DLoss: 0.788552 TELoss: 1.510061
+Test Loss: 0.513205, Accuracy: 1757/2007 (88%)
+Test entropy:  0.091891
+Train Epoch: 22 	 DLoss: 0.742908 TELoss: 1.477153
+Test Loss: 0.568278, Accuracy: 1748/2007 (87%)
+Test entropy:  0.100323
+Train Epoch: 23 	 DLoss: 0.815975 TELoss: 1.521626
+Test Loss: 0.582605, Accuracy: 1776/2007 (88%)
+Test entropy:  0.073405
+Train Epoch: 24 	 DLoss: 0.754095 TELoss: 1.559993
+Test Loss: 0.658793, Accuracy: 1736/2007 (86%)
+Test entropy:  0.083709
+Train Epoch: 25 	 DLoss: 0.763366 TELoss: 1.548326
+Test Loss: 0.584534, Accuracy: 1785/2007 (89%)
+Test entropy:  0.065942
+Train Epoch: 26 	 DLoss: 0.825799 TELoss: 1.519025
+Test Loss: 0.561413, Accuracy: 1775/2007 (88%)
+Test entropy:  0.067209
+Train Epoch: 27 	 DLoss: 0.775127 TELoss: 1.598520
+Test Loss: 0.709985, Accuracy: 1758/2007 (88%)
+Test entropy:  0.063058
+Train Epoch: 28 	 DLoss: 0.818595 TELoss: 1.596191
+Test Loss: 0.588489, Accuracy: 1791/2007 (89%)
+Test entropy:  0.061815
+Train Epoch: 29 	 DLoss: 0.845302 TELoss: 1.596097
+Test Loss: 0.606508, Accuracy: 1778/2007 (89%)
+Test entropy:  0.064132
+Train Epoch: 30 	 DLoss: 0.828631 TELoss: 1.594921
+Test Loss: 0.619859, Accuracy: 1777/2007 (89%)
+Test entropy:  0.064175
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s2">&quot;g_loss&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;g_loss&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s2">&quot;d_loss&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;d_loss&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s2">&quot;test_loss&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;test_loss&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s2">&quot;test_accuracy&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;test_accuracy&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s2">&quot;test_entropy&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;test_entropy&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/f0218e8426ab44fa5087f317b9de68fa95b732ea34befc4693702fef1f7f2122.png" src="../_images/f0218e8426ab44fa5087f317b9de68fa95b732ea34befc4693702fef1f7f2122.png" />
+</div>
+</div>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># After warmup we can increase learning rate ?</span>
+
+<span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
+    <span class="n">g</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-3</span>
+
+
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">300</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">d_loss</span><span class="p">,</span> <span class="n">g_loss</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span>
+        <span class="n">discriminator</span><span class="p">,</span>
+        <span class="n">source_encoder</span><span class="p">,</span>
+        <span class="n">target_encoder</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">,</span>
+        <span class="n">target_train</span><span class="p">,</span>
+        <span class="n">source_train</span><span class="p">,</span>
+        <span class="n">d_optimizer</span><span class="p">,</span>
+        <span class="n">te_optimizer</span><span class="p">,</span>
+        <span class="n">epoch</span><span class="p">,</span>
+        <span class="n">log_interval</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;d_loss&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d_loss</span><span class="p">)</span>
+    <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;g_loss&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g_loss</span><span class="p">)</span>
+    <span class="n">test_loss</span><span class="p">,</span> <span class="n">test_accuracy</span> <span class="o">=</span> <span class="n">test</span><span class="p">(</span><span class="n">target_model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">target_test</span><span class="p">)</span>
+
+    <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;test_loss&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_loss</span><span class="p">)</span>
+    <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;test_accuracy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_accuracy</span><span class="p">)</span>
+
+    <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;test_entropy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compute_entropy</span><span class="p">(</span><span class="n">target_model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">target_train</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test entropy: </span><span class="si">{</span><span class="n">hist</span><span class="p">[</span><span class="s1">&#39;test_entropy&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2"> .6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Train Epoch: 1 	 DLoss: 0.843383 TELoss: 1.515358
+Test Loss: 0.691970, Accuracy: 1775/2007 (88%)
+Test entropy:  0.053726
+Train Epoch: 2 	 DLoss: 0.856212 TELoss: 1.617071
+Test Loss: 0.578301, Accuracy: 1791/2007 (89%)
+Test entropy:  0.057727
+Train Epoch: 3 	 DLoss: 0.801790 TELoss: 1.543685
+Test Loss: 0.553441, Accuracy: 1780/2007 (89%)
+Test entropy:  0.066383
+Train Epoch: 4 	 DLoss: 0.870805 TELoss: 1.450558
+Test Loss: 0.632021, Accuracy: 1775/2007 (88%)
+Test entropy:  0.053035
+Train Epoch: 5 	 DLoss: 0.868140 TELoss: 1.563149
+Test Loss: 0.629229, Accuracy: 1770/2007 (88%)
+Test entropy:  0.053594
+Train Epoch: 6 	 DLoss: 0.832501 TELoss: 1.525388
+Test Loss: 0.600805, Accuracy: 1778/2007 (89%)
+Test entropy:  0.060777
+Train Epoch: 7 	 DLoss: 0.819728 TELoss: 1.505711
+Test Loss: 0.592271, Accuracy: 1789/2007 (89%)
+Test entropy:  0.053912
+Train Epoch: 8 	 DLoss: 0.864361 TELoss: 1.464429
+Test Loss: 0.658406, Accuracy: 1775/2007 (88%)
+Test entropy:  0.058964
+Train Epoch: 9 	 DLoss: 0.849032 TELoss: 1.517817
+Test Loss: 0.653129, Accuracy: 1786/2007 (89%)
+Test entropy:  0.053164
+Train Epoch: 10 	 DLoss: 0.875446 TELoss: 1.472936
+Test Loss: 0.586025, Accuracy: 1792/2007 (89%)
+Test entropy:  0.054189
+Train Epoch: 11 	 DLoss: 0.868789 TELoss: 1.454802
+Test Loss: 0.672633, Accuracy: 1782/2007 (89%)
+Test entropy:  0.056496
+Train Epoch: 12 	 DLoss: 0.861528 TELoss: 1.525926
+Test Loss: 0.648923, Accuracy: 1786/2007 (89%)
+Test entropy:  0.054007
+Train Epoch: 13 	 DLoss: 0.905090 TELoss: 1.444410
+Test Loss: 0.624603, Accuracy: 1786/2007 (89%)
+Test entropy:  0.049883
+Train Epoch: 14 	 DLoss: 0.826719 TELoss: 1.482821
+Test Loss: 0.568981, Accuracy: 1784/2007 (89%)
+Test entropy:  0.056942
+Train Epoch: 15 	 DLoss: 0.885382 TELoss: 1.444227
+Test Loss: 0.627841, Accuracy: 1788/2007 (89%)
+Test entropy:  0.049419
+Train Epoch: 16 	 DLoss: 0.861510 TELoss: 1.471139
+Test Loss: 0.646653, Accuracy: 1792/2007 (89%)
+Test entropy:  0.048541
+Train Epoch: 17 	 DLoss: 0.882611 TELoss: 1.470258
+Test Loss: 0.611266, Accuracy: 1785/2007 (89%)
+Test entropy:  0.056999
+Train Epoch: 18 	 DLoss: 0.893455 TELoss: 1.410397
+Test Loss: 0.635927, Accuracy: 1792/2007 (89%)
+Test entropy:  0.050683
+Train Epoch: 19 	 DLoss: 0.918571 TELoss: 1.405574
+Test Loss: 0.625563, Accuracy: 1792/2007 (89%)
+Test entropy:  0.051447
+Train Epoch: 20 	 DLoss: 0.860967 TELoss: 1.447262
+Test Loss: 0.602306, Accuracy: 1783/2007 (89%)
+Test entropy:  0.055024
+Train Epoch: 21 	 DLoss: 0.835416 TELoss: 1.430228
+Test Loss: 0.574177, Accuracy: 1778/2007 (89%)
+Test entropy:  0.063300
+Train Epoch: 22 	 DLoss: 0.918082 TELoss: 1.363266
+Test Loss: 0.577700, Accuracy: 1797/2007 (90%)
+Test entropy:  0.047054
+Train Epoch: 23 	 DLoss: 0.880816 TELoss: 1.441130
+Test Loss: 0.664002, Accuracy: 1769/2007 (88%)
+Test entropy:  0.055318
+Train Epoch: 24 	 DLoss: 0.904839 TELoss: 1.334237
+Test Loss: 0.611727, Accuracy: 1781/2007 (89%)
+Test entropy:  0.053012
+Train Epoch: 25 	 DLoss: 0.879475 TELoss: 1.391534
+Test Loss: 0.641874, Accuracy: 1783/2007 (89%)
+Test entropy:  0.048401
+Train Epoch: 26 	 DLoss: 0.920073 TELoss: 1.371011
+Test Loss: 0.642824, Accuracy: 1787/2007 (89%)
+Test entropy:  0.046225
+Train Epoch: 27 	 DLoss: 0.928448 TELoss: 1.373815
+Test Loss: 0.651421, Accuracy: 1785/2007 (89%)
+Test entropy:  0.049350
+Train Epoch: 28 	 DLoss: 0.898357 TELoss: 1.376897
+Test Loss: 0.620599, Accuracy: 1793/2007 (89%)
+Test entropy:  0.046142
+Train Epoch: 29 	 DLoss: 0.916231 TELoss: 1.348151
+Test Loss: 0.630859, Accuracy: 1788/2007 (89%)
+Test entropy:  0.046086
+Train Epoch: 30 	 DLoss: 0.911746 TELoss: 1.372547
+Test Loss: 0.594344, Accuracy: 1791/2007 (89%)
+Test entropy:  0.047234
+Train Epoch: 31 	 DLoss: 0.940682 TELoss: 1.316048
+Test Loss: 0.588801, Accuracy: 1792/2007 (89%)
+Test entropy:  0.046912
+Train Epoch: 32 	 DLoss: 0.956569 TELoss: 1.333643
+Test Loss: 0.594421, Accuracy: 1790/2007 (89%)
+Test entropy:  0.042896
+Train Epoch: 33 	 DLoss: 0.927032 TELoss: 1.343718
+Test Loss: 0.631306, Accuracy: 1792/2007 (89%)
+Test entropy:  0.048538
+Train Epoch: 34 	 DLoss: 0.959326 TELoss: 1.308763
+Test Loss: 0.621543, Accuracy: 1790/2007 (89%)
+Test entropy:  0.045025
+Train Epoch: 35 	 DLoss: 0.927257 TELoss: 1.362422
+Test Loss: 0.620833, Accuracy: 1788/2007 (89%)
+Test entropy:  0.046303
+Train Epoch: 36 	 DLoss: 0.945305 TELoss: 1.297311
+Test Loss: 0.570690, Accuracy: 1793/2007 (89%)
+Test entropy:  0.046948
+Train Epoch: 37 	 DLoss: 0.925470 TELoss: 1.332534
+Test Loss: 0.633707, Accuracy: 1785/2007 (89%)
+Test entropy:  0.045700
+Train Epoch: 38 	 DLoss: 0.956461 TELoss: 1.326245
+Test Loss: 0.601501, Accuracy: 1793/2007 (89%)
+Test entropy:  0.045009
+Train Epoch: 39 	 DLoss: 0.952705 TELoss: 1.299516
+Test Loss: 0.654287, Accuracy: 1782/2007 (89%)
+Test entropy:  0.051946
+Train Epoch: 40 	 DLoss: 0.946443 TELoss: 1.332201
+Test Loss: 0.562959, Accuracy: 1799/2007 (90%)
+Test entropy:  0.042726
+Train Epoch: 41 	 DLoss: 0.928329 TELoss: 1.310966
+Test Loss: 0.555861, Accuracy: 1796/2007 (89%)
+Test entropy:  0.048313
+Train Epoch: 42 	 DLoss: 0.943533 TELoss: 1.286098
+Test Loss: 0.571760, Accuracy: 1795/2007 (89%)
+Test entropy:  0.045867
+Train Epoch: 43 	 DLoss: 0.947966 TELoss: 1.307473
+Test Loss: 0.618355, Accuracy: 1791/2007 (89%)
+Test entropy:  0.043217
+Train Epoch: 44 	 DLoss: 0.966239 TELoss: 1.320522
+Test Loss: 0.622932, Accuracy: 1793/2007 (89%)
+Test entropy:  0.043477
+Train Epoch: 45 	 DLoss: 0.955185 TELoss: 1.293295
+Test Loss: 0.570414, Accuracy: 1788/2007 (89%)
+Test entropy:  0.045306
+Train Epoch: 46 	 DLoss: 0.948322 TELoss: 1.276114
+Test Loss: 0.551660, Accuracy: 1801/2007 (90%)
+Test entropy:  0.044788
+Train Epoch: 47 	 DLoss: 0.953621 TELoss: 1.277241
+Test Loss: 0.571569, Accuracy: 1787/2007 (89%)
+Test entropy:  0.046161
+Train Epoch: 48 	 DLoss: 0.949049 TELoss: 1.280075
+Test Loss: 0.541449, Accuracy: 1796/2007 (89%)
+Test entropy:  0.045074
+Train Epoch: 49 	 DLoss: 0.971508 TELoss: 1.256765
+Test Loss: 0.617710, Accuracy: 1788/2007 (89%)
+Test entropy:  0.040758
+Train Epoch: 50 	 DLoss: 0.951950 TELoss: 1.288007
+Test Loss: 0.541730, Accuracy: 1794/2007 (89%)
+Test entropy:  0.045780
+Train Epoch: 51 	 DLoss: 0.950097 TELoss: 1.249538
+Test Loss: 0.563329, Accuracy: 1793/2007 (89%)
+Test entropy:  0.040937
+Train Epoch: 52 	 DLoss: 0.949682 TELoss: 1.286742
+Test Loss: 0.526946, Accuracy: 1794/2007 (89%)
+Test entropy:  0.044898
+Train Epoch: 53 	 DLoss: 0.947629 TELoss: 1.256266
+Test Loss: 0.568824, Accuracy: 1784/2007 (89%)
+Test entropy:  0.044019
+Train Epoch: 54 	 DLoss: 0.957967 TELoss: 1.249141
+Test Loss: 0.550501, Accuracy: 1790/2007 (89%)
+Test entropy:  0.046309
+Train Epoch: 55 	 DLoss: 0.973896 TELoss: 1.262864
+Test Loss: 0.531112, Accuracy: 1786/2007 (89%)
+Test entropy:  0.043241
+Train Epoch: 56 	 DLoss: 0.954736 TELoss: 1.254810
+Test Loss: 0.605764, Accuracy: 1787/2007 (89%)
+Test entropy:  0.043067
+Train Epoch: 57 	 DLoss: 0.993917 TELoss: 1.237129
+Test Loss: 0.550399, Accuracy: 1790/2007 (89%)
+Test entropy:  0.042603
+Train Epoch: 58 	 DLoss: 0.952759 TELoss: 1.283804
+Test Loss: 0.604365, Accuracy: 1790/2007 (89%)
+Test entropy:  0.049209
+Train Epoch: 59 	 DLoss: 0.982774 TELoss: 1.229692
+Test Loss: 0.520168, Accuracy: 1793/2007 (89%)
+Test entropy:  0.044131
+Train Epoch: 60 	 DLoss: 0.999300 TELoss: 1.225170
+Test Loss: 0.606533, Accuracy: 1787/2007 (89%)
+Test entropy:  0.042378
+Train Epoch: 61 	 DLoss: 0.987039 TELoss: 1.235533
+Test Loss: 0.540968, Accuracy: 1793/2007 (89%)
+Test entropy:  0.040193
+Train Epoch: 62 	 DLoss: 0.992555 TELoss: 1.247966
+Test Loss: 0.587943, Accuracy: 1791/2007 (89%)
+Test entropy:  0.044544
+Train Epoch: 63 	 DLoss: 0.996542 TELoss: 1.228819
+Test Loss: 0.603183, Accuracy: 1788/2007 (89%)
+Test entropy:  0.041945
+Train Epoch: 64 	 DLoss: 0.996492 TELoss: 1.214024
+Test Loss: 0.578071, Accuracy: 1793/2007 (89%)
+Test entropy:  0.040605
+Train Epoch: 65 	 DLoss: 1.001030 TELoss: 1.222155
+Test Loss: 0.582084, Accuracy: 1786/2007 (89%)
+Test entropy:  0.041335
+Train Epoch: 66 	 DLoss: 0.975033 TELoss: 1.227623
+Test Loss: 0.584979, Accuracy: 1793/2007 (89%)
+Test entropy:  0.041469
+Train Epoch: 67 	 DLoss: 0.995284 TELoss: 1.213663
+Test Loss: 0.574668, Accuracy: 1793/2007 (89%)
+Test entropy:  0.043191
+Train Epoch: 68 	 DLoss: 1.001911 TELoss: 1.201767
+Test Loss: 0.590597, Accuracy: 1796/2007 (89%)
+Test entropy:  0.041102
+Train Epoch: 69 	 DLoss: 0.997674 TELoss: 1.224052
+Test Loss: 0.638739, Accuracy: 1784/2007 (89%)
+Test entropy:  0.041338
+Train Epoch: 70 	 DLoss: 1.017838 TELoss: 1.197931
+Test Loss: 0.601018, Accuracy: 1786/2007 (89%)
+Test entropy:  0.041267
+Train Epoch: 71 	 DLoss: 0.982168 TELoss: 1.219779
+Test Loss: 0.531954, Accuracy: 1802/2007 (90%)
+Test entropy:  0.044003
+Train Epoch: 72 	 DLoss: 1.003022 TELoss: 1.196381
+Test Loss: 0.607778, Accuracy: 1783/2007 (89%)
+Test entropy:  0.040283
+Train Epoch: 73 	 DLoss: 1.007201 TELoss: 1.215388
+Test Loss: 0.592406, Accuracy: 1795/2007 (89%)
+Test entropy:  0.040811
+Train Epoch: 74 	 DLoss: 1.022296 TELoss: 1.205479
+Test Loss: 0.591994, Accuracy: 1785/2007 (89%)
+Test entropy:  0.040107
+Train Epoch: 75 	 DLoss: 1.004138 TELoss: 1.215914
+Test Loss: 0.581907, Accuracy: 1786/2007 (89%)
+Test entropy:  0.044046
+Train Epoch: 76 	 DLoss: 1.004224 TELoss: 1.168879
+Test Loss: 0.607279, Accuracy: 1793/2007 (89%)
+Test entropy:  0.040374
+Train Epoch: 77 	 DLoss: 1.005161 TELoss: 1.205416
+Test Loss: 0.612229, Accuracy: 1796/2007 (89%)
+Test entropy:  0.036839
+Train Epoch: 78 	 DLoss: 1.014435 TELoss: 1.215059
+Test Loss: 0.610335, Accuracy: 1789/2007 (89%)
+Test entropy:  0.037467
+Train Epoch: 79 	 DLoss: 1.001174 TELoss: 1.208519
+Test Loss: 0.580839, Accuracy: 1799/2007 (90%)
+Test entropy:  0.040690
+Train Epoch: 80 	 DLoss: 1.015399 TELoss: 1.195505
+Test Loss: 0.569620, Accuracy: 1791/2007 (89%)
+Test entropy:  0.040598
+Train Epoch: 81 	 DLoss: 1.006799 TELoss: 1.191406
+Test Loss: 0.600825, Accuracy: 1795/2007 (89%)
+Test entropy:  0.038883
+Train Epoch: 82 	 DLoss: 1.005428 TELoss: 1.223640
+Test Loss: 0.612543, Accuracy: 1791/2007 (89%)
+Test entropy:  0.037136
+Train Epoch: 83 	 DLoss: 1.001166 TELoss: 1.204760
+Test Loss: 0.582212, Accuracy: 1797/2007 (90%)
+Test entropy:  0.039259
+Train Epoch: 84 	 DLoss: 0.998720 TELoss: 1.183916
+Test Loss: 0.596955, Accuracy: 1796/2007 (89%)
+Test entropy:  0.037196
+Train Epoch: 85 	 DLoss: 1.007345 TELoss: 1.193913
+Test Loss: 0.600252, Accuracy: 1796/2007 (89%)
+Test entropy:  0.037581
+Train Epoch: 86 	 DLoss: 1.004619 TELoss: 1.199161
+Test Loss: 0.564635, Accuracy: 1795/2007 (89%)
+Test entropy:  0.038633
+Train Epoch: 87 	 DLoss: 1.007431 TELoss: 1.180155
+Test Loss: 0.592532, Accuracy: 1800/2007 (90%)
+Test entropy:  0.036503
+Train Epoch: 88 	 DLoss: 0.998888 TELoss: 1.222188
+Test Loss: 0.589118, Accuracy: 1795/2007 (89%)
+Test entropy:  0.036740
+Train Epoch: 89 	 DLoss: 1.013054 TELoss: 1.176496
+Test Loss: 0.587395, Accuracy: 1795/2007 (89%)
+Test entropy:  0.038761
+Train Epoch: 90 	 DLoss: 1.006040 TELoss: 1.208277
+Test Loss: 0.585886, Accuracy: 1795/2007 (89%)
+Test entropy:  0.037058
+Train Epoch: 91 	 DLoss: 0.994976 TELoss: 1.194118
+Test Loss: 0.573692, Accuracy: 1797/2007 (90%)
+Test entropy:  0.039402
+Train Epoch: 92 	 DLoss: 1.013643 TELoss: 1.166393
+Test Loss: 0.648947, Accuracy: 1788/2007 (89%)
+Test entropy:  0.033728
+Train Epoch: 93 	 DLoss: 1.009008 TELoss: 1.202447
+Test Loss: 0.567196, Accuracy: 1801/2007 (90%)
+Test entropy:  0.036399
+Train Epoch: 94 	 DLoss: 1.007357 TELoss: 1.155510
+Test Loss: 0.620679, Accuracy: 1795/2007 (89%)
+Test entropy:  0.036934
+Train Epoch: 95 	 DLoss: 1.001433 TELoss: 1.202368
+Test Loss: 0.537693, Accuracy: 1802/2007 (90%)
+Test entropy:  0.036983
+Train Epoch: 96 	 DLoss: 1.005593 TELoss: 1.189634
+Test Loss: 0.650047, Accuracy: 1785/2007 (89%)
+Test entropy:  0.036293
+Train Epoch: 97 	 DLoss: 0.996127 TELoss: 1.205635
+Test Loss: 0.554605, Accuracy: 1798/2007 (90%)
+Test entropy:  0.037364
+Train Epoch: 98 	 DLoss: 1.011948 TELoss: 1.170190
+Test Loss: 0.586077, Accuracy: 1800/2007 (90%)
+Test entropy:  0.040532
+Train Epoch: 99 	 DLoss: 1.011711 TELoss: 1.162451
+Test Loss: 0.538429, Accuracy: 1809/2007 (90%)
+Test entropy:  0.035873
+Train Epoch: 100 	 DLoss: 1.018728 TELoss: 1.194638
+Test Loss: 0.605625, Accuracy: 1795/2007 (89%)
+Test entropy:  0.036250
+Train Epoch: 101 	 DLoss: 0.999764 TELoss: 1.177806
+Test Loss: 0.521175, Accuracy: 1809/2007 (90%)
+Test entropy:  0.035389
+Train Epoch: 102 	 DLoss: 1.008000 TELoss: 1.179247
+Test Loss: 0.603792, Accuracy: 1805/2007 (90%)
+Test entropy:  0.035902
+Train Epoch: 103 	 DLoss: 1.017233 TELoss: 1.178671
+Test Loss: 0.560631, Accuracy: 1809/2007 (90%)
+Test entropy:  0.036077
+Train Epoch: 104 	 DLoss: 1.008131 TELoss: 1.182104
+Test Loss: 0.534228, Accuracy: 1806/2007 (90%)
+Test entropy:  0.037072
+Train Epoch: 105 	 DLoss: 1.011774 TELoss: 1.152571
+Test Loss: 0.550104, Accuracy: 1804/2007 (90%)
+Test entropy:  0.036181
+Train Epoch: 106 	 DLoss: 1.016741 TELoss: 1.156513
+Test Loss: 0.622655, Accuracy: 1804/2007 (90%)
+Test entropy:  0.034323
+Train Epoch: 107 	 DLoss: 1.017360 TELoss: 1.186747
+Test Loss: 0.530068, Accuracy: 1810/2007 (90%)
+Test entropy:  0.036158
+Train Epoch: 108 	 DLoss: 1.006905 TELoss: 1.134369
+Test Loss: 0.543492, Accuracy: 1805/2007 (90%)
+Test entropy:  0.036918
+Train Epoch: 109 	 DLoss: 1.019907 TELoss: 1.164281
+Test Loss: 0.582532, Accuracy: 1798/2007 (90%)
+Test entropy:  0.035687
+Train Epoch: 110 	 DLoss: 1.009825 TELoss: 1.173023
+Test Loss: 0.569269, Accuracy: 1794/2007 (89%)
+Test entropy:  0.035084
+Train Epoch: 111 	 DLoss: 1.017277 TELoss: 1.174106
+Test Loss: 0.561106, Accuracy: 1811/2007 (90%)
+Test entropy:  0.037201
+Train Epoch: 112 	 DLoss: 1.015418 TELoss: 1.158253
+Test Loss: 0.576615, Accuracy: 1803/2007 (90%)
+Test entropy:  0.034974
+Train Epoch: 113 	 DLoss: 1.021884 TELoss: 1.159920
+Test Loss: 0.534458, Accuracy: 1811/2007 (90%)
+Test entropy:  0.035747
+Train Epoch: 114 	 DLoss: 1.011589 TELoss: 1.146688
+Test Loss: 0.547379, Accuracy: 1806/2007 (90%)
+Test entropy:  0.037252
+Train Epoch: 115 	 DLoss: 1.022156 TELoss: 1.166085
+Test Loss: 0.571939, Accuracy: 1807/2007 (90%)
+Test entropy:  0.036886
+Train Epoch: 116 	 DLoss: 1.018005 TELoss: 1.158504
+Test Loss: 0.543094, Accuracy: 1809/2007 (90%)
+Test entropy:  0.036069
+Train Epoch: 117 	 DLoss: 1.027046 TELoss: 1.149632
+Test Loss: 0.540309, Accuracy: 1807/2007 (90%)
+Test entropy:  0.035769
+Train Epoch: 118 	 DLoss: 1.029492 TELoss: 1.165686
+Test Loss: 0.554589, Accuracy: 1810/2007 (90%)
+Test entropy:  0.035968
+Train Epoch: 119 	 DLoss: 1.012921 TELoss: 1.175880
+Test Loss: 0.517131, Accuracy: 1816/2007 (90%)
+Test entropy:  0.035989
+Train Epoch: 120 	 DLoss: 1.018857 TELoss: 1.135891
+Test Loss: 0.562037, Accuracy: 1806/2007 (90%)
+Test entropy:  0.036415
+Train Epoch: 121 	 DLoss: 1.017583 TELoss: 1.147799
+Test Loss: 0.519189, Accuracy: 1813/2007 (90%)
+Test entropy:  0.036099
+Train Epoch: 122 	 DLoss: 1.026290 TELoss: 1.151351
+Test Loss: 0.536643, Accuracy: 1820/2007 (91%)
+Test entropy:  0.034963
+Train Epoch: 123 	 DLoss: 1.017360 TELoss: 1.150090
+Test Loss: 0.540930, Accuracy: 1807/2007 (90%)
+Test entropy:  0.035372
+Train Epoch: 124 	 DLoss: 1.030775 TELoss: 1.135640
+Test Loss: 0.537014, Accuracy: 1812/2007 (90%)
+Test entropy:  0.035785
+Train Epoch: 125 	 DLoss: 1.017466 TELoss: 1.165331
+Test Loss: 0.535700, Accuracy: 1807/2007 (90%)
+Test entropy:  0.036232
+Train Epoch: 126 	 DLoss: 1.026315 TELoss: 1.137397
+Test Loss: 0.500431, Accuracy: 1817/2007 (91%)
+Test entropy:  0.036184
+Train Epoch: 127 	 DLoss: 1.034229 TELoss: 1.160571
+Test Loss: 0.563469, Accuracy: 1811/2007 (90%)
+Test entropy:  0.035676
+Train Epoch: 128 	 DLoss: 1.022609 TELoss: 1.160362
+Test Loss: 0.529526, Accuracy: 1809/2007 (90%)
+Test entropy:  0.036672
+Train Epoch: 129 	 DLoss: 1.022390 TELoss: 1.134084
+Test Loss: 0.512249, Accuracy: 1812/2007 (90%)
+Test entropy:  0.036279
+Train Epoch: 130 	 DLoss: 1.022411 TELoss: 1.139189
+Test Loss: 0.529603, Accuracy: 1817/2007 (91%)
+Test entropy:  0.034911
+Train Epoch: 131 	 DLoss: 1.041182 TELoss: 1.160358
+Test Loss: 0.517189, Accuracy: 1819/2007 (91%)
+Test entropy:  0.037942
+Train Epoch: 132 	 DLoss: 1.023975 TELoss: 1.137233
+Test Loss: 0.499745, Accuracy: 1817/2007 (91%)
+Test entropy:  0.036606
+Train Epoch: 133 	 DLoss: 1.018505 TELoss: 1.156600
+Test Loss: 0.535938, Accuracy: 1825/2007 (91%)
+Test entropy:  0.036932
+Train Epoch: 134 	 DLoss: 1.013417 TELoss: 1.154631
+Test Loss: 0.498080, Accuracy: 1824/2007 (91%)
+Test entropy:  0.035920
+Train Epoch: 135 	 DLoss: 1.031807 TELoss: 1.137262
+Test Loss: 0.518664, Accuracy: 1814/2007 (90%)
+Test entropy:  0.036543
+Train Epoch: 136 	 DLoss: 1.030606 TELoss: 1.148061
+Test Loss: 0.533079, Accuracy: 1823/2007 (91%)
+Test entropy:  0.035224
+Train Epoch: 137 	 DLoss: 1.025111 TELoss: 1.158160
+Test Loss: 0.504734, Accuracy: 1819/2007 (91%)
+Test entropy:  0.037971
+Train Epoch: 138 	 DLoss: 1.014911 TELoss: 1.127145
+Test Loss: 0.516321, Accuracy: 1820/2007 (91%)
+Test entropy:  0.036596
+Train Epoch: 139 	 DLoss: 1.028913 TELoss: 1.152537
+Test Loss: 0.543510, Accuracy: 1821/2007 (91%)
+Test entropy:  0.036913
+Train Epoch: 140 	 DLoss: 1.037852 TELoss: 1.130613
+Test Loss: 0.495189, Accuracy: 1821/2007 (91%)
+Test entropy:  0.036887
+Train Epoch: 141 	 DLoss: 1.032968 TELoss: 1.139667
+Test Loss: 0.509805, Accuracy: 1823/2007 (91%)
+Test entropy:  0.034911
+Train Epoch: 142 	 DLoss: 1.027773 TELoss: 1.138965
+Test Loss: 0.512002, Accuracy: 1823/2007 (91%)
+Test entropy:  0.036459
+Train Epoch: 143 	 DLoss: 1.022140 TELoss: 1.133621
+Test Loss: 0.487708, Accuracy: 1824/2007 (91%)
+Test entropy:  0.038157
+Train Epoch: 144 	 DLoss: 1.036667 TELoss: 1.123121
+Test Loss: 0.546279, Accuracy: 1821/2007 (91%)
+Test entropy:  0.037359
+Train Epoch: 145 	 DLoss: 1.036884 TELoss: 1.148316
+Test Loss: 0.499808, Accuracy: 1827/2007 (91%)
+Test entropy:  0.035991
+Train Epoch: 146 	 DLoss: 1.032153 TELoss: 1.138378
+Test Loss: 0.476724, Accuracy: 1822/2007 (91%)
+Test entropy:  0.037802
+Train Epoch: 147 	 DLoss: 1.046955 TELoss: 1.125396
+Test Loss: 0.526906, Accuracy: 1819/2007 (91%)
+Test entropy:  0.035467
+Train Epoch: 148 	 DLoss: 1.034257 TELoss: 1.149483
+Test Loss: 0.554053, Accuracy: 1815/2007 (90%)
+Test entropy:  0.038212
+Train Epoch: 149 	 DLoss: 1.025583 TELoss: 1.137413
+Test Loss: 0.471407, Accuracy: 1830/2007 (91%)
+Test entropy:  0.036254
+Train Epoch: 150 	 DLoss: 1.028542 TELoss: 1.138292
+Test Loss: 0.511685, Accuracy: 1823/2007 (91%)
+Test entropy:  0.037594
+Train Epoch: 151 	 DLoss: 1.028316 TELoss: 1.151869
+Test Loss: 0.512121, Accuracy: 1824/2007 (91%)
+Test entropy:  0.036487
+Train Epoch: 152 	 DLoss: 1.040747 TELoss: 1.128396
+Test Loss: 0.513948, Accuracy: 1817/2007 (91%)
+Test entropy:  0.038457
+Train Epoch: 153 	 DLoss: 1.031699 TELoss: 1.121926
+Test Loss: 0.516872, Accuracy: 1822/2007 (91%)
+Test entropy:  0.036529
+Train Epoch: 154 	 DLoss: 1.036189 TELoss: 1.114869
+Test Loss: 0.516846, Accuracy: 1827/2007 (91%)
+Test entropy:  0.035958
+Train Epoch: 155 	 DLoss: 1.032770 TELoss: 1.142435
+Test Loss: 0.493060, Accuracy: 1823/2007 (91%)
+Test entropy:  0.038178
+Train Epoch: 156 	 DLoss: 1.036110 TELoss: 1.121594
+Test Loss: 0.526347, Accuracy: 1821/2007 (91%)
+Test entropy:  0.037966
+Train Epoch: 157 	 DLoss: 1.029876 TELoss: 1.130499
+Test Loss: 0.493447, Accuracy: 1822/2007 (91%)
+Test entropy:  0.038160
+Train Epoch: 158 	 DLoss: 1.033037 TELoss: 1.114517
+Test Loss: 0.487258, Accuracy: 1823/2007 (91%)
+Test entropy:  0.036380
+Train Epoch: 159 	 DLoss: 1.039368 TELoss: 1.122050
+Test Loss: 0.516007, Accuracy: 1824/2007 (91%)
+Test entropy:  0.037724
+Train Epoch: 160 	 DLoss: 1.039501 TELoss: 1.116067
+Test Loss: 0.516125, Accuracy: 1820/2007 (91%)
+Test entropy:  0.035592
+Train Epoch: 161 	 DLoss: 1.033070 TELoss: 1.119439
+Test Loss: 0.504597, Accuracy: 1821/2007 (91%)
+Test entropy:  0.036474
+Train Epoch: 162 	 DLoss: 1.034933 TELoss: 1.146118
+Test Loss: 0.512222, Accuracy: 1825/2007 (91%)
+Test entropy:  0.037177
+Train Epoch: 163 	 DLoss: 1.038159 TELoss: 1.113032
+Test Loss: 0.497231, Accuracy: 1821/2007 (91%)
+Test entropy:  0.038846
+Train Epoch: 164 	 DLoss: 1.038049 TELoss: 1.113300
+Test Loss: 0.510209, Accuracy: 1821/2007 (91%)
+Test entropy:  0.036065
+Train Epoch: 165 	 DLoss: 1.039020 TELoss: 1.139788
+Test Loss: 0.499422, Accuracy: 1830/2007 (91%)
+Test entropy:  0.036430
+Train Epoch: 166 	 DLoss: 1.051938 TELoss: 1.121664
+Test Loss: 0.501195, Accuracy: 1815/2007 (90%)
+Test entropy:  0.038980
+Train Epoch: 167 	 DLoss: 1.039636 TELoss: 1.129822
+Test Loss: 0.533241, Accuracy: 1823/2007 (91%)
+Test entropy:  0.037600
+Train Epoch: 168 	 DLoss: 1.034139 TELoss: 1.126931
+Test Loss: 0.464506, Accuracy: 1831/2007 (91%)
+Test entropy:  0.037544
+Train Epoch: 169 	 DLoss: 1.044719 TELoss: 1.127475
+Test Loss: 0.501538, Accuracy: 1817/2007 (91%)
+Test entropy:  0.037274
+Train Epoch: 170 	 DLoss: 1.049395 TELoss: 1.122842
+Test Loss: 0.521336, Accuracy: 1828/2007 (91%)
+Test entropy:  0.036834
+Train Epoch: 171 	 DLoss: 1.043915 TELoss: 1.115177
+Test Loss: 0.494837, Accuracy: 1823/2007 (91%)
+Test entropy:  0.037298
+Train Epoch: 172 	 DLoss: 1.039145 TELoss: 1.115623
+Test Loss: 0.513697, Accuracy: 1825/2007 (91%)
+Test entropy:  0.037000
+Train Epoch: 173 	 DLoss: 1.049589 TELoss: 1.112361
+Test Loss: 0.489275, Accuracy: 1825/2007 (91%)
+Test entropy:  0.036597
+Train Epoch: 174 	 DLoss: 1.033486 TELoss: 1.121391
+Test Loss: 0.483035, Accuracy: 1822/2007 (91%)
+Test entropy:  0.038172
+Train Epoch: 175 	 DLoss: 1.035349 TELoss: 1.123788
+Test Loss: 0.507998, Accuracy: 1824/2007 (91%)
+Test entropy:  0.037647
+Train Epoch: 176 	 DLoss: 1.030290 TELoss: 1.123714
+Test Loss: 0.495290, Accuracy: 1827/2007 (91%)
+Test entropy:  0.036782
+Train Epoch: 177 	 DLoss: 1.042179 TELoss: 1.123159
+Test Loss: 0.514095, Accuracy: 1831/2007 (91%)
+Test entropy:  0.036100
+Train Epoch: 178 	 DLoss: 1.041850 TELoss: 1.127871
+Test Loss: 0.474726, Accuracy: 1833/2007 (91%)
+Test entropy:  0.036407
+Train Epoch: 179 	 DLoss: 1.034053 TELoss: 1.100121
+Test Loss: 0.510426, Accuracy: 1825/2007 (91%)
+Test entropy:  0.036616
+Train Epoch: 180 	 DLoss: 1.037103 TELoss: 1.129657
+Test Loss: 0.518632, Accuracy: 1823/2007 (91%)
+Test entropy:  0.036132
+Train Epoch: 181 	 DLoss: 1.043586 TELoss: 1.101719
+Test Loss: 0.497883, Accuracy: 1828/2007 (91%)
+Test entropy:  0.036371
+Train Epoch: 182 	 DLoss: 1.041808 TELoss: 1.101415
+Test Loss: 0.516382, Accuracy: 1831/2007 (91%)
+Test entropy:  0.035212
+Train Epoch: 183 	 DLoss: 1.044670 TELoss: 1.108607
+Test Loss: 0.524596, Accuracy: 1819/2007 (91%)
+Test entropy:  0.036695
+Train Epoch: 184 	 DLoss: 1.029892 TELoss: 1.108957
+Test Loss: 0.516489, Accuracy: 1823/2007 (91%)
+Test entropy:  0.035714
+Train Epoch: 185 	 DLoss: 1.042238 TELoss: 1.118007
+Test Loss: 0.506736, Accuracy: 1835/2007 (91%)
+Test entropy:  0.036453
+Train Epoch: 186 	 DLoss: 1.033019 TELoss: 1.098882
+Test Loss: 0.505608, Accuracy: 1826/2007 (91%)
+Test entropy:  0.036033
+Train Epoch: 187 	 DLoss: 1.045994 TELoss: 1.101004
+Test Loss: 0.525166, Accuracy: 1821/2007 (91%)
+Test entropy:  0.036120
+Train Epoch: 188 	 DLoss: 1.041126 TELoss: 1.111671
+Test Loss: 0.476353, Accuracy: 1836/2007 (91%)
+Test entropy:  0.036634
+Train Epoch: 189 	 DLoss: 1.041886 TELoss: 1.116408
+Test Loss: 0.536774, Accuracy: 1822/2007 (91%)
+Test entropy:  0.035872
+Train Epoch: 190 	 DLoss: 1.032624 TELoss: 1.127371
+Test Loss: 0.492589, Accuracy: 1830/2007 (91%)
+Test entropy:  0.038255
+Train Epoch: 191 	 DLoss: 1.034781 TELoss: 1.087806
+Test Loss: 0.496133, Accuracy: 1826/2007 (91%)
+Test entropy:  0.036000
+Train Epoch: 192 	 DLoss: 1.043757 TELoss: 1.108451
+Test Loss: 0.522768, Accuracy: 1821/2007 (91%)
+Test entropy:  0.035552
+Train Epoch: 193 	 DLoss: 1.035163 TELoss: 1.112350
+Test Loss: 0.499490, Accuracy: 1829/2007 (91%)
+Test entropy:  0.036266
+Train Epoch: 194 	 DLoss: 1.044597 TELoss: 1.107214
+Test Loss: 0.490241, Accuracy: 1828/2007 (91%)
+Test entropy:  0.037545
+Train Epoch: 195 	 DLoss: 1.038400 TELoss: 1.113765
+Test Loss: 0.492945, Accuracy: 1834/2007 (91%)
+Test entropy:  0.036503
+Train Epoch: 196 	 DLoss: 1.042054 TELoss: 1.099620
+Test Loss: 0.507379, Accuracy: 1826/2007 (91%)
+Test entropy:  0.035522
+Train Epoch: 197 	 DLoss: 1.033888 TELoss: 1.122750
+Test Loss: 0.508580, Accuracy: 1821/2007 (91%)
+Test entropy:  0.037135
+Train Epoch: 198 	 DLoss: 1.043806 TELoss: 1.105613
+Test Loss: 0.477698, Accuracy: 1827/2007 (91%)
+Test entropy:  0.036805
+Train Epoch: 199 	 DLoss: 1.044307 TELoss: 1.104810
+Test Loss: 0.527548, Accuracy: 1819/2007 (91%)
+Test entropy:  0.035734
+Train Epoch: 200 	 DLoss: 1.046741 TELoss: 1.104624
+Test Loss: 0.489027, Accuracy: 1826/2007 (91%)
+Test entropy:  0.037055
+Train Epoch: 201 	 DLoss: 1.045286 TELoss: 1.092986
+Test Loss: 0.495736, Accuracy: 1829/2007 (91%)
+Test entropy:  0.035864
+Train Epoch: 202 	 DLoss: 1.033149 TELoss: 1.113936
+Test Loss: 0.503790, Accuracy: 1830/2007 (91%)
+Test entropy:  0.036880
+Train Epoch: 203 	 DLoss: 1.051027 TELoss: 1.110900
+Test Loss: 0.500599, Accuracy: 1825/2007 (91%)
+Test entropy:  0.036791
+Train Epoch: 204 	 DLoss: 1.042723 TELoss: 1.124004
+Test Loss: 0.493985, Accuracy: 1830/2007 (91%)
+Test entropy:  0.036596
+Train Epoch: 205 	 DLoss: 1.051184 TELoss: 1.091401
+Test Loss: 0.461955, Accuracy: 1830/2007 (91%)
+Test entropy:  0.036416
+Train Epoch: 206 	 DLoss: 1.041419 TELoss: 1.112577
+Test Loss: 0.491078, Accuracy: 1824/2007 (91%)
+Test entropy:  0.037187
+Train Epoch: 207 	 DLoss: 1.044615 TELoss: 1.100935
+Test Loss: 0.475206, Accuracy: 1827/2007 (91%)
+Test entropy:  0.036526
+Train Epoch: 208 	 DLoss: 1.046836 TELoss: 1.107511
+Test Loss: 0.488599, Accuracy: 1829/2007 (91%)
+Test entropy:  0.036133
+Train Epoch: 209 	 DLoss: 1.049538 TELoss: 1.105003
+Test Loss: 0.495868, Accuracy: 1828/2007 (91%)
+Test entropy:  0.037511
+Train Epoch: 210 	 DLoss: 1.041324 TELoss: 1.102586
+Test Loss: 0.480162, Accuracy: 1828/2007 (91%)
+Test entropy:  0.035468
+Train Epoch: 211 	 DLoss: 1.054513 TELoss: 1.104676
+Test Loss: 0.503722, Accuracy: 1825/2007 (91%)
+Test entropy:  0.036870
+Train Epoch: 212 	 DLoss: 1.052527 TELoss: 1.090858
+Test Loss: 0.469539, Accuracy: 1829/2007 (91%)
+Test entropy:  0.036467
+Train Epoch: 213 	 DLoss: 1.037572 TELoss: 1.101679
+Test Loss: 0.473864, Accuracy: 1827/2007 (91%)
+Test entropy:  0.036451
+Train Epoch: 214 	 DLoss: 1.062399 TELoss: 1.105984
+Test Loss: 0.494794, Accuracy: 1826/2007 (91%)
+Test entropy:  0.036463
+Train Epoch: 215 	 DLoss: 1.039443 TELoss: 1.099691
+Test Loss: 0.481906, Accuracy: 1827/2007 (91%)
+Test entropy:  0.036630
+Train Epoch: 216 	 DLoss: 1.039091 TELoss: 1.116460
+Test Loss: 0.495279, Accuracy: 1828/2007 (91%)
+Test entropy:  0.035691
+Train Epoch: 217 	 DLoss: 1.045367 TELoss: 1.096414
+Test Loss: 0.460311, Accuracy: 1833/2007 (91%)
+Test entropy:  0.036699
+Train Epoch: 218 	 DLoss: 1.043573 TELoss: 1.097070
+Test Loss: 0.492146, Accuracy: 1828/2007 (91%)
+Test entropy:  0.035108
+Train Epoch: 219 	 DLoss: 1.050313 TELoss: 1.105551
+Test Loss: 0.493887, Accuracy: 1827/2007 (91%)
+Test entropy:  0.035719
+Train Epoch: 220 	 DLoss: 1.055661 TELoss: 1.088462
+Test Loss: 0.479593, Accuracy: 1831/2007 (91%)
+Test entropy:  0.035640
+Train Epoch: 221 	 DLoss: 1.043084 TELoss: 1.105490
+Test Loss: 0.497193, Accuracy: 1828/2007 (91%)
+Test entropy:  0.035053
+Train Epoch: 222 	 DLoss: 1.043224 TELoss: 1.097748
+Test Loss: 0.471676, Accuracy: 1831/2007 (91%)
+Test entropy:  0.035670
+Train Epoch: 223 	 DLoss: 1.050142 TELoss: 1.092118
+Test Loss: 0.481504, Accuracy: 1829/2007 (91%)
+Test entropy:  0.034958
+Train Epoch: 224 	 DLoss: 1.042868 TELoss: 1.095652
+Test Loss: 0.480520, Accuracy: 1831/2007 (91%)
+Test entropy:  0.035526
+Train Epoch: 225 	 DLoss: 1.049501 TELoss: 1.094094
+Test Loss: 0.471073, Accuracy: 1828/2007 (91%)
+Test entropy:  0.035263
+Train Epoch: 226 	 DLoss: 1.054906 TELoss: 1.099597
+Test Loss: 0.477365, Accuracy: 1834/2007 (91%)
+Test entropy:  0.034887
+Train Epoch: 227 	 DLoss: 1.041223 TELoss: 1.080761
+Test Loss: 0.469982, Accuracy: 1832/2007 (91%)
+Test entropy:  0.035149
+Train Epoch: 228 	 DLoss: 1.040171 TELoss: 1.100164
+Test Loss: 0.462114, Accuracy: 1836/2007 (91%)
+Test entropy:  0.035594
+Train Epoch: 229 	 DLoss: 1.054436 TELoss: 1.095955
+Test Loss: 0.463199, Accuracy: 1829/2007 (91%)
+Test entropy:  0.035159
+Train Epoch: 230 	 DLoss: 1.046529 TELoss: 1.086485
+Test Loss: 0.464902, Accuracy: 1830/2007 (91%)
+Test entropy:  0.034227
+Train Epoch: 231 	 DLoss: 1.048631 TELoss: 1.088462
+Test Loss: 0.476822, Accuracy: 1834/2007 (91%)
+Test entropy:  0.034439
+Train Epoch: 232 	 DLoss: 1.053011 TELoss: 1.089499
+Test Loss: 0.476883, Accuracy: 1833/2007 (91%)
+Test entropy:  0.034244
+Train Epoch: 233 	 DLoss: 1.048437 TELoss: 1.092486
+Test Loss: 0.490649, Accuracy: 1834/2007 (91%)
+Test entropy:  0.034682
+Train Epoch: 234 	 DLoss: 1.049197 TELoss: 1.076517
+Test Loss: 0.457373, Accuracy: 1834/2007 (91%)
+Test entropy:  0.035008
+Train Epoch: 235 	 DLoss: 1.052560 TELoss: 1.091078
+Test Loss: 0.491413, Accuracy: 1831/2007 (91%)
+Test entropy:  0.034575
+Train Epoch: 236 	 DLoss: 1.050289 TELoss: 1.087322
+Test Loss: 0.459956, Accuracy: 1833/2007 (91%)
+Test entropy:  0.034163
+Train Epoch: 237 	 DLoss: 1.052717 TELoss: 1.075698
+Test Loss: 0.467204, Accuracy: 1831/2007 (91%)
+Test entropy:  0.035100
+Train Epoch: 238 	 DLoss: 1.049790 TELoss: 1.081561
+Test Loss: 0.460479, Accuracy: 1835/2007 (91%)
+Test entropy:  0.035135
+Train Epoch: 239 	 DLoss: 1.046761 TELoss: 1.079806
+Test Loss: 0.471934, Accuracy: 1833/2007 (91%)
+Test entropy:  0.033726
+Train Epoch: 240 	 DLoss: 1.051086 TELoss: 1.081345
+Test Loss: 0.463646, Accuracy: 1834/2007 (91%)
+Test entropy:  0.034740
+Train Epoch: 241 	 DLoss: 1.051300 TELoss: 1.074258
+Test Loss: 0.457228, Accuracy: 1834/2007 (91%)
+Test entropy:  0.034477
+Train Epoch: 242 	 DLoss: 1.055939 TELoss: 1.091380
+Test Loss: 0.458607, Accuracy: 1833/2007 (91%)
+Test entropy:  0.035213
+Train Epoch: 243 	 DLoss: 1.042413 TELoss: 1.093150
+Test Loss: 0.460611, Accuracy: 1835/2007 (91%)
+Test entropy:  0.033736
+Train Epoch: 244 	 DLoss: 1.047160 TELoss: 1.088887
+Test Loss: 0.469685, Accuracy: 1829/2007 (91%)
+Test entropy:  0.034749
+Train Epoch: 245 	 DLoss: 1.056142 TELoss: 1.095595
+Test Loss: 0.451406, Accuracy: 1833/2007 (91%)
+Test entropy:  0.035535
+Train Epoch: 246 	 DLoss: 1.051190 TELoss: 1.073938
+Test Loss: 0.454283, Accuracy: 1837/2007 (92%)
+Test entropy:  0.034535
+Train Epoch: 247 	 DLoss: 1.051478 TELoss: 1.092382
+Test Loss: 0.465365, Accuracy: 1834/2007 (91%)
+Test entropy:  0.034051
+Train Epoch: 248 	 DLoss: 1.052838 TELoss: 1.087598
+Test Loss: 0.448300, Accuracy: 1840/2007 (92%)
+Test entropy:  0.034674
+Train Epoch: 249 	 DLoss: 1.057550 TELoss: 1.077896
+Test Loss: 0.475874, Accuracy: 1825/2007 (91%)
+Test entropy:  0.035348
+Train Epoch: 250 	 DLoss: 1.063575 TELoss: 1.090077
+Test Loss: 0.463049, Accuracy: 1833/2007 (91%)
+Test entropy:  0.035051
+Train Epoch: 251 	 DLoss: 1.054871 TELoss: 1.081198
+Test Loss: 0.475018, Accuracy: 1835/2007 (91%)
+Test entropy:  0.033838
+Train Epoch: 252 	 DLoss: 1.051364 TELoss: 1.089750
+Test Loss: 0.460561, Accuracy: 1829/2007 (91%)
+Test entropy:  0.034184
+Train Epoch: 253 	 DLoss: 1.049266 TELoss: 1.082830
+Test Loss: 0.452284, Accuracy: 1836/2007 (91%)
+Test entropy:  0.034749
+Train Epoch: 254 	 DLoss: 1.044735 TELoss: 1.083572
+Test Loss: 0.464969, Accuracy: 1834/2007 (91%)
+Test entropy:  0.034292
+Train Epoch: 255 	 DLoss: 1.057518 TELoss: 1.076236
+Test Loss: 0.476120, Accuracy: 1831/2007 (91%)
+Test entropy:  0.034458
+Train Epoch: 256 	 DLoss: 1.047430 TELoss: 1.088446
+Test Loss: 0.467091, Accuracy: 1832/2007 (91%)
+Test entropy:  0.034637
+Train Epoch: 257 	 DLoss: 1.055541 TELoss: 1.080960
+Test Loss: 0.449928, Accuracy: 1835/2007 (91%)
+Test entropy:  0.033727
+Train Epoch: 258 	 DLoss: 1.049659 TELoss: 1.090138
+Test Loss: 0.485057, Accuracy: 1830/2007 (91%)
+Test entropy:  0.034808
+Train Epoch: 259 	 DLoss: 1.059524 TELoss: 1.088376
+Test Loss: 0.448480, Accuracy: 1836/2007 (91%)
+Test entropy:  0.034819
+Train Epoch: 260 	 DLoss: 1.055696 TELoss: 1.086844
+Test Loss: 0.469979, Accuracy: 1828/2007 (91%)
+Test entropy:  0.034596
+Train Epoch: 261 	 DLoss: 1.063367 TELoss: 1.089054
+Test Loss: 0.464444, Accuracy: 1834/2007 (91%)
+Test entropy:  0.034270
+Train Epoch: 262 	 DLoss: 1.055747 TELoss: 1.092442
+Test Loss: 0.452446, Accuracy: 1838/2007 (92%)
+Test entropy:  0.033929
+Train Epoch: 263 	 DLoss: 1.063936 TELoss: 1.083579
+Test Loss: 0.466071, Accuracy: 1835/2007 (91%)
+Test entropy:  0.034594
+Train Epoch: 264 	 DLoss: 1.060623 TELoss: 1.083350
+Test Loss: 0.443962, Accuracy: 1837/2007 (92%)
+Test entropy:  0.035070
+Train Epoch: 265 	 DLoss: 1.056202 TELoss: 1.070368
+Test Loss: 0.455705, Accuracy: 1834/2007 (91%)
+Test entropy:  0.034609
+Train Epoch: 266 	 DLoss: 1.065336 TELoss: 1.080587
+Test Loss: 0.459201, Accuracy: 1838/2007 (92%)
+Test entropy:  0.033828
+Train Epoch: 267 	 DLoss: 1.052813 TELoss: 1.080240
+Test Loss: 0.451735, Accuracy: 1837/2007 (92%)
+Test entropy:  0.033926
+Train Epoch: 268 	 DLoss: 1.062624 TELoss: 1.074725
+Test Loss: 0.445663, Accuracy: 1838/2007 (92%)
+Test entropy:  0.035404
+Train Epoch: 269 	 DLoss: 1.051185 TELoss: 1.079299
+Test Loss: 0.466535, Accuracy: 1831/2007 (91%)
+Test entropy:  0.034456
+Train Epoch: 270 	 DLoss: 1.056502 TELoss: 1.071457
+Test Loss: 0.454148, Accuracy: 1834/2007 (91%)
+Test entropy:  0.034117
+Train Epoch: 271 	 DLoss: 1.065515 TELoss: 1.069800
+Test Loss: 0.439687, Accuracy: 1841/2007 (92%)
+Test entropy:  0.034456
+Train Epoch: 272 	 DLoss: 1.045013 TELoss: 1.079099
+Test Loss: 0.466989, Accuracy: 1831/2007 (91%)
+Test entropy:  0.034420
+Train Epoch: 273 	 DLoss: 1.049142 TELoss: 1.093294
+Test Loss: 0.432988, Accuracy: 1841/2007 (92%)
+Test entropy:  0.034561
+Train Epoch: 274 	 DLoss: 1.056572 TELoss: 1.076225
+Test Loss: 0.460801, Accuracy: 1832/2007 (91%)
+Test entropy:  0.035244
+Train Epoch: 275 	 DLoss: 1.061570 TELoss: 1.076119
+Test Loss: 0.452346, Accuracy: 1842/2007 (92%)
+Test entropy:  0.034648
+Train Epoch: 276 	 DLoss: 1.066043 TELoss: 1.068808
+Test Loss: 0.437185, Accuracy: 1846/2007 (92%)
+Test entropy:  0.034767
+Train Epoch: 277 	 DLoss: 1.054684 TELoss: 1.078431
+Test Loss: 0.451538, Accuracy: 1840/2007 (92%)
+Test entropy:  0.034189
+Train Epoch: 278 	 DLoss: 1.043146 TELoss: 1.083509
+Test Loss: 0.443612, Accuracy: 1838/2007 (92%)
+Test entropy:  0.034187
+Train Epoch: 279 	 DLoss: 1.063258 TELoss: 1.076066
+Test Loss: 0.439409, Accuracy: 1844/2007 (92%)
+Test entropy:  0.034368
+Train Epoch: 280 	 DLoss: 1.062838 TELoss: 1.080058
+Test Loss: 0.447900, Accuracy: 1837/2007 (92%)
+Test entropy:  0.035402
+Train Epoch: 281 	 DLoss: 1.049361 TELoss: 1.081878
+Test Loss: 0.446922, Accuracy: 1839/2007 (92%)
+Test entropy:  0.035211
+Train Epoch: 282 	 DLoss: 1.044791 TELoss: 1.089230
+Test Loss: 0.441979, Accuracy: 1834/2007 (91%)
+Test entropy:  0.035090
+Train Epoch: 283 	 DLoss: 1.052017 TELoss: 1.070823
+Test Loss: 0.442418, Accuracy: 1837/2007 (92%)
+Test entropy:  0.034941
+Train Epoch: 284 	 DLoss: 1.051199 TELoss: 1.081972
+Test Loss: 0.439546, Accuracy: 1840/2007 (92%)
+Test entropy:  0.034740
+Train Epoch: 285 	 DLoss: 1.069054 TELoss: 1.076005
+Test Loss: 0.423708, Accuracy: 1843/2007 (92%)
+Test entropy:  0.034524
+Train Epoch: 286 	 DLoss: 1.062187 TELoss: 1.071942
+Test Loss: 0.450243, Accuracy: 1835/2007 (91%)
+Test entropy:  0.034044
+Train Epoch: 287 	 DLoss: 1.058194 TELoss: 1.074008
+Test Loss: 0.435521, Accuracy: 1843/2007 (92%)
+Test entropy:  0.034001
+Train Epoch: 288 	 DLoss: 1.064376 TELoss: 1.086212
+Test Loss: 0.442738, Accuracy: 1843/2007 (92%)
+Test entropy:  0.034443
+Train Epoch: 289 	 DLoss: 1.059208 TELoss: 1.094851
+Test Loss: 0.435081, Accuracy: 1845/2007 (92%)
+Test entropy:  0.035449
+Train Epoch: 290 	 DLoss: 1.060312 TELoss: 1.086702
+Test Loss: 0.445411, Accuracy: 1838/2007 (92%)
+Test entropy:  0.034672
+Train Epoch: 291 	 DLoss: 1.054381 TELoss: 1.089716
+Test Loss: 0.445174, Accuracy: 1838/2007 (92%)
+Test entropy:  0.034044
+Train Epoch: 292 	 DLoss: 1.067186 TELoss: 1.072591
+Test Loss: 0.437554, Accuracy: 1848/2007 (92%)
+Test entropy:  0.033709
+Train Epoch: 293 	 DLoss: 1.064847 TELoss: 1.094468
+Test Loss: 0.450435, Accuracy: 1836/2007 (91%)
+Test entropy:  0.035861
+Train Epoch: 294 	 DLoss: 1.065691 TELoss: 1.073218
+Test Loss: 0.441562, Accuracy: 1841/2007 (92%)
+Test entropy:  0.034041
+Train Epoch: 295 	 DLoss: 1.066332 TELoss: 1.078474
+Test Loss: 0.430595, Accuracy: 1845/2007 (92%)
+Test entropy:  0.033399
+Train Epoch: 296 	 DLoss: 1.065497 TELoss: 1.070637
+Test Loss: 0.425442, Accuracy: 1840/2007 (92%)
+Test entropy:  0.035268
+Train Epoch: 297 	 DLoss: 1.060692 TELoss: 1.078361
+Test Loss: 0.438329, Accuracy: 1842/2007 (92%)
+Test entropy:  0.033753
+Train Epoch: 298 	 DLoss: 1.053150 TELoss: 1.079021
+Test Loss: 0.429989, Accuracy: 1845/2007 (92%)
+Test entropy:  0.034110
+Train Epoch: 299 	 DLoss: 1.075716 TELoss: 1.075218
+Test Loss: 0.439835, Accuracy: 1842/2007 (92%)
+Test entropy:  0.034391
+Train Epoch: 300 	 DLoss: 1.062543 TELoss: 1.065505
+Test Loss: 0.429540, Accuracy: 1844/2007 (92%)
+Test entropy:  0.032959
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s2">&quot;g_loss&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;g_loss&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s2">&quot;d_loss&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;d_loss&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s2">&quot;test_loss&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;test_loss&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s2">&quot;test_accuracy&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;test_accuracy&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hist</span><span class="p">[</span><span class="s2">&quot;test_entropy&quot;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;test_entropy&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/0acf391f40ea16a805dead6df9fcb73f4998605be007202c721f9b758d7d6599.png" src="../_images/0acf391f40ea16a805dead6df9fcb73f4998605be007202c721f9b758d7d6599.png" />
+</div>
+</div>
+<p>Let’s unpack what just happened! We just trained a new encoder in an adversarial fashion so that the embedding created on the USPS dataset look like the embedding created from the MNIST dataset.
+The generator and discriminator loss tell us how performant is each part of the network. However, like with any GAN set-up you can’t expect them to go to 0 like in supervised training as those are essentially fighting against each other. It is good to not see one completely overtake the other though. We are good there.</p>
+<p>What about test metrics? I chose to add three:</p>
+<ol class="arabic simple">
+<li><p>Test loss is the cross-entropy loss of the classifier formed by the new encoder stacked with the previous classifier head. This is the model that we want to deploy on USPS.</p></li>
+<li><p>Accuracy is the accuracy of that same model.</p></li>
+<li><p>BUT, you would not have access to those in any real-case scenario if you don’t have labeled data, they are simply meant as a verification metric here to prove the efficacy of the procedure.</p></li>
+<li><p>The test entropy measures the model confidence in its prediction (regardless of what the prediction is). This metric is available in practice since it does not depend on labels.</p></li>
+</ol>
+<p>Those three seem to converge fairly quickly during training. In particular, accuracy quickly reaches 92% (up from 78%). That’s a great improvement!</p>
+<p>What is a little crazy to me is that this procedure does not use any label, and the only real link to labeled data is that fact that the encoder was initialized from the MNIST encoder. Even after all that training, it has kept that prior knowledge.</p>
+<p>The fact that this kind of adaptation works is not trivial and it practice it does not work all the time.</p>
+</section>
+<section id="analysis">
+<h3>Analysis<a class="headerlink" href="#analysis" title="Link to this heading">#</a></h3>
+<p>Let’s investigate the new model further to understand. First, a quick glance at the previous vs new model on the test data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">target_test</span><span class="p">)</span>
+<span class="n">test</span><span class="p">(</span><span class="n">target_model</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">target_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Test Loss: 0.993355, Accuracy: 1573/2007 (78%)
+Test Loss: 0.429502, Accuracy: 1844/2007 (92%)
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(0.4295015206786015, 0.918784255107125)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Second let’s visualize how the new model performs using reconstructions and predictive probabilities.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">target_autoencoder</span> <span class="o">=</span> <span class="n">AutoEncoder</span><span class="p">(</span><span class="n">target_encoder</span><span class="p">,</span> <span class="n">decoder</span><span class="p">)</span>
+<span class="n">viz_dataset</span><span class="p">(</span><span class="n">target_autoencoder</span><span class="p">,</span> <span class="n">target_train</span><span class="p">,</span> <span class="n">target_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/3072e2f35395472da8918c486dc5f2976d89db15c80a9c7a4c6b9816984203fd.png" src="../_images/3072e2f35395472da8918c486dc5f2976d89db15c80a9c7a4c6b9816984203fd.png" />
+</div>
+</div>
+<p>The predictions are mostly good (90% accuracy), and the predictive distributions are very peaked (which is consistent with the entropy we were tracking over time).
+The reconstructions are not prestine, the labels is clearly conserved between the two, but a lot of irrealistic artefacts can be spotted.
+This would indicate that the embeddings are not completely the same between MNIST and USPS, otherwise the reconstructions would have high quality.</p>
+<p>Let’s inspect the embeddings directly using TSNE to compare with the previous encoder:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_tsne</span> <span class="o">=</span> <span class="mi">7000</span>
+
+<span class="n">x_source</span><span class="p">,</span> <span class="n">y_source</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">encoder</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_tsne</span><span class="p">)</span>
+<span class="n">x_target</span><span class="p">,</span> <span class="n">y_target</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">target_encoder</span><span class="p">,</span> <span class="n">target_train</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_tsne</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x_source</span><span class="p">,</span> <span class="n">x_target</span><span class="p">])</span>
+<span class="n">tsne</span> <span class="o">=</span> <span class="n">TSNE</span><span class="p">()</span>
+<span class="n">x_2d</span> <span class="o">=</span> <span class="n">tsne</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">x_2d_source</span> <span class="o">=</span> <span class="n">x_2d</span><span class="p">[:</span><span class="n">n_tsne</span><span class="p">]</span>
+<span class="n">x_2d_target</span> <span class="o">=</span> <span class="n">x_2d</span><span class="p">[</span><span class="n">n_tsne</span><span class="p">:]</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">y_source</span><span class="p">,</span> <span class="n">y_target</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_plot</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;x0&quot;</span><span class="p">:</span> <span class="n">x_2d</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;x1&quot;</span><span class="p">:</span> <span class="n">x_2d</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">y</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;str&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;dataset&quot;</span><span class="p">:</span> <span class="n">n_tsne</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">n_tsne</span> <span class="o">*</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">],</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df_plot</span><span class="p">,</span>  <span class="c1"># .sample(frac=0.1),</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;x0&quot;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;x1&quot;</span><span class="p">,</span>
+    <span class="n">hue</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span>
+    <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
+    <span class="n">hue_order</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)],</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="p">(</span><span class="mf">1.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/264e73005c1af4cd73a14fa6a209f85969032fa75e847cd20bfef33a00b47302.png" src="../_images/264e73005c1af4cd73a14fa6a209f85969032fa75e847cd20bfef33a00b47302.png" />
+</div>
+</div>
+<p>This TSNE embedding is very encouraging. First off, we still have clusters with mostly a single dominant label (color here). Secondly, source and target datapoints are now much more mixed within each cluster, which seems to indicate that the adversarial training is working. We still see dataset-specific clusters, such as 1’s here, or 7’s which seem to be sub-partitioned. There does not seem to be a specific direction or region of the space where USPS is more likely to be.
+This is very encouraging. Notice how 4’s and 9’s which used to be very close with the previous encoder are now much more distinct.</p>
+<p>In different runs we can have different results, so I am not sure this is always reproduceable. In certain runs with good test accuracy, I still got different clusters per datasets, but the clusters were at least adjacent.</p>
+<p>We haven’t paused to much to consider whether it was even possible for the encoder to generate embeddings that look similar to MNIST ones from a capacity standpoint. In particular, the use of RELU non linearity when training MNIST can “kill” parts of the network and render impossible any further fine-tuning. In a practical scenario, I think keeping an eye on the sparsity of activation can be a decent measure of future model fine-tuneability.</p>
+<p>To finish, let’s look at the confusion matrix:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span>
+
+
+<span class="n">pred_source</span><span class="p">,</span> <span class="n">y_source</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_tsne</span><span class="p">)</span>
+<span class="n">pred_target</span><span class="p">,</span> <span class="n">y_target</span> <span class="o">=</span> <span class="n">predict</span><span class="p">(</span><span class="n">target_model</span><span class="p">,</span> <span class="n">target_train</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n_tsne</span><span class="p">)</span>
+
+
+<span class="n">y_pred_source</span> <span class="o">=</span> <span class="n">pred_source</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">y_pred_target</span> <span class="o">=</span> <span class="n">pred_target</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="n">source_cm</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_source</span><span class="p">,</span> <span class="n">y_pred_source</span><span class="p">)</span>
+<span class="n">source_acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">source_cm</span><span class="p">)</span> <span class="o">/</span> <span class="n">source_cm</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MNIST:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">source_cm</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">source_acc</span><span class="p">)</span>
+
+<span class="n">target_cm_adda</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_target</span><span class="p">,</span> <span class="n">y_pred_target</span><span class="p">)</span>
+<span class="n">target_acc_adda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">target_cm_adda</span><span class="p">)</span> <span class="o">/</span> <span class="n">target_cm_adda</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;USPS:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">target_cm_adda</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">target_acc_adda</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Previous (for comparison):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">target_cm</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">target_acc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MNIST:
+[[662   0   0   0   0   0   1   0   0   0]
+ [  0 803   0   1   0   1   0   2   0   0]
+ [  0   0 723   0   0   0   0   2   0   0]
+ [  0   0   0 731   0   0   0   0   0   0]
+ [  0   0   0   0 708   0   0   1   0   0]
+ [  0   0   0   0   0 580   1   0   0   0]
+ [  0   0   0   0   0   0 673   0   0   0]
+ [  0   0   0   0   0   0   0 705   0   0]
+ [  0   0   3   1   0   0   1   0 673   0]
+ [  0   0   0   1   1   0   0   0   0 726]]
+[0.9984917  0.99504337 0.99724138 1.         0.99858956 0.99827883
+ 1.         1.         0.99262537 0.99725275]
+USPS:
+[[1120    1    5    2    0    3   10    1   10    0]
+ [   0  962    0    1    0    0    0    1    0    0]
+ [   0    3  670    7    8    0    3   13    1    0]
+ [   0    0    6  613    0    4    0    2    1    1]
+ [   0    3    2    0  592    0    5   20    2    7]
+ [   2    0    2   53    0  465    9    3    1    2]
+ [   0    0    0    0    3    0  622    0    2    0]
+ [   0    0    6    2    1    0    0  614    0    1]
+ [   1    4    2    2    1   11    3    6  489    2]
+ [   0    2    0    1    2    0    0  114    2  491]]
+[0.97222222 0.99792531 0.95035461 0.97767145 0.93819334 0.86592179
+ 0.99202552 0.98397436 0.93857965 0.80228758]
+Previous (for comparison):
+[[999   2   7 106   0  12  16   0   0   0]
+ [  0 926   1   2   0   0  36   0   0   0]
+ [  0   3 665  26   1   0   5   2   0   0]
+ [  0   0   7 624   0   5   0   1   0   0]
+ [  2  15   4   0 520   1  20  57   1   1]
+ [  2   0   4  43   0 470   5   5   0   0]
+ [ 10   3   1   5   0  11 610   0   0   0]
+ [  1  59  37   0   1   0   2 524   0   0]
+ [  2  11  13  13   7   3  50   8 412   1]
+ [  0  15   1   3 271   1  12 301  14   2]]
+[0.87478109 0.95958549 0.94729345 0.97959184 0.8373591  0.88846881
+ 0.953125   0.83974359 0.79230769 0.00322581]
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the new model, we see that the largest error is classifying 9’s as 7’s (which we can see are adjacent in the TSNE plots).
+When comparing with the previous model, accuracy can improve dramatically: for 9’s it goes from 0% to 80%. Most of them increase except 3’s went from 97.9% to 97.7%.
+In the ADDA paper they show a few datasets that go down in accuracy, but success is likely if the datasets are not completely different.</p>
+<p>We can look at 9’s in particular to investigate: but I am not seeing an obvious thing to fix.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We have 10% of 9&#39;s that are interpreted as 7</span>
+
+<span class="k">def</span> <span class="nf">inspect</span><span class="p">(</span><span class="n">autoencoder</span><span class="p">,</span> <span class="n">loader</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
+        <span class="n">x_hat</span> <span class="o">=</span> <span class="n">autoencoder</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+        <span class="n">y_hat</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">9</span><span class="p">]</span>
+        <span class="n">x_hat</span> <span class="o">=</span> <span class="n">x_hat</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">9</span><span class="p">]</span>
+        <span class="n">y_hat</span> <span class="o">=</span> <span class="n">y_hat</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">9</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">9</span><span class="p">]</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">fig</span><span class="o">.</span><span class="n">set_figheight</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">set_figwidth</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x_hat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">to_rgb</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;label = </span><span class="si">{</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">to_rgb</span><span class="p">(</span><span class="n">x_hat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+
+            <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;prediction = </span><span class="si">{</span><span class="n">y_hat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">break</span>
+
+
+<span class="n">inspect</span><span class="p">(</span><span class="n">target_autoencoder</span><span class="p">,</span> <span class="n">target_train</span><span class="p">,</span> <span class="n">target_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/423ea259e60dcf4366fff9cac062da7dca2b9fcce4cbec74e82ab5d4431acc0d.png" src="../_images/423ea259e60dcf4366fff9cac062da7dca2b9fcce4cbec74e82ab5d4431acc0d.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<p>In this article we have explored how to adapt a model to a new dataset using ADDA, and how to evaluate and understand it.
+By using this technique we’ve been able to reduce the error rate from 21% to 8% without introducing major architecture changes. We simply fine-tuned network architectures that we got from the original model.</p>
+<p>The subject of domain-adaptation is vast, but I hope this adds a new tool to your toolbox and helps you build intuition for your next out-of-distribution deployments.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./chapters"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">The AV blog</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="7h_multivariate_probit_regression.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">JAX Recipe III: Multi-class predictions with correlation (Multivariate Probit)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-mnist-classifier">Simple MNIST Classifier</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#first-deployment-on-usps-data">First deployment on USPS data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visualize-the-embedding-using-tsne">Visualize the embedding using TSNE</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adapting-the-model-to-usps">Adapting the model to USPS</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training">Training</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analysis">Analysis</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Arthur Vivé
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
