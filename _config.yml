@@ -30,6 +30,10 @@ repository:
 html:
   use_issues_button: true
   use_repository_button: true
+  analytics:
+    plausible_analytics_domain: aevive.github.io
+    plausible_analytics_url: https://vivetech.duckdns.org/analytics/script.js
+
 
 only_build_toc_files: true
 
